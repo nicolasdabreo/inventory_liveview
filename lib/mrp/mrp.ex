@@ -1,3 +1,5 @@
+# credo:disable-for-this-file Credo.Check.Refactor.ModuleDependencie
+
 defmodule MRP do
   @moduledoc """
   MRP keeps the contexts that define your domain

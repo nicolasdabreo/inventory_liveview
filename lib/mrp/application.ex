@@ -1,9 +1,11 @@
+# credo:disable-for-this-file Credo.Check.Refactor.ModuleDependencies
+
 defmodule MRP.Application do
   @moduledoc false
 
   use Application
 
-  @impl true
+  @impl Application
   def start(_type, _args) do
     children = [
       Web.Telemetry,
@@ -19,7 +21,7 @@ defmodule MRP.Application do
 
   defp oban_config, do: Application.fetch_env!(:mrp, Oban)
 
-  @impl true
+  @impl Application
   def config_change(changed, _new, removed) do
     Web.Endpoint.config_change(changed, removed)
     :ok

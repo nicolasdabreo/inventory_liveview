@@ -7,7 +7,8 @@ defmodule Mailer.Emails.UserResetPasswordInstructions do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"to" => to, "url" => url}}) do
-    base_email_from_noreply(to)
+    to
+    |> base_email_from_noreply()
     |> subject("Reset password instructions")
     |> text_body("""
     Hi #{to},

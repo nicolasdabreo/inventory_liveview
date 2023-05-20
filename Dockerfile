@@ -5,8 +5,8 @@
 # https://hub.docker.com/_/ubuntu?tab=tags
 #
 
-ARG ELIXIR_VERSION=1.14.2
-ARG OTP_VERSION=25.1.2
+ARG ELIXIR_VERSION=1.14.4
+ARG OTP_VERSION=26.0
 ARG DEBIAN_VERSION=bullseye-20220801-slim
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"

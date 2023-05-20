@@ -25,7 +25,7 @@ defmodule MRP.MixProject do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp elixirc_paths(_env), do: ["lib"]
 
   # Specifies your project dependencies.
   #
@@ -44,14 +44,14 @@ defmodule MRP.MixProject do
 
       # other
       {:bcrypt_elixir, "~> 3.0"},
-      {:ecto_sql, "~> 3.9"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:swoosh, "~> 1.9"},
+      {:swoosh, "~> 1.10"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.5-alpha.1"},
-      {:oban, "~> 2.14"},
-      {:finch, "~> 0.15"},
+      {:oban, "~> 2.15"},
+      {:finch, "~> 0.16"},
       {:mjml, "~> 1.5"},
 
       # dev & test

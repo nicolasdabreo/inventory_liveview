@@ -3,14 +3,12 @@ defmodule Web.Pages.LandingLive do
 
   use Web, :live_view
 
-  @impl true
+  @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:page_title, "Welcome to MRP!")}
+    {:ok, assign(socket, :page_title, "Welcome to MRP!")}
   end
 
-  @impl true
+  @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <.header>Landing page</.header>

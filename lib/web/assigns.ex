@@ -9,9 +9,7 @@ defmodule Web.Assigns do
   import Phoenix.Component
 
   def on_mount(:default, _params, _session, socket) do
-    {:cont,
-     socket
-     |> assign_uri_info()}
+    {:cont, assign_uri_info(socket)}
   end
 
   defp assign_uri_info(socket) do
