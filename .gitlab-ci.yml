@@ -1,0 +1,102 @@
+stages:
+  - compile
+  - test
+  - post-test
+  - build
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - _build
+    - deps
+
+variables:
+  GITLAB_CI: "true"
+  SECRET_KEY_BASE: PB9AUBuNWOw7awn8C2KuVT0eqcC/GJhuRsmfWs3wsyAj3uJ/ctmWBT32jI0DVSyZ
+  PORT: "4000"
+  POSTGRES_URL: postgres://postgres:postgres@postgres:5432/mrp_test
+  POSTGRES_DB: store_test
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: "postgres"
+  MIX_ENV: "test"
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  HOST: ""
+
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
+
+compile:
+  stage: compile  
+  image: elixir:1.14.2
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+  script:
+    - mix deps.get
+    - mix deps.compile
+    - mix compile --warnings-as-errors
+  artifacts:
+    paths:
+      - mix.lock
+      - _build
+      - deps
+    expire_in: 20 minutes
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+
+test:
+  stage: test
+  image: elixir:1.14.2
+  services:
+    - postgres:13.0
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix ecto.create
+    - mix ecto.migrate
+  script:
+    - mix test
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+
+code-quality:
+  stage: test
+  image: elixir:1.14.2
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+  script:
+    - mix format --check-formatted
+    - mix credo
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+
+coverage:
+  stage: post-test
+  image: elixir:1.14.2
+  allow_failure: true
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+  script:
+    - mix test --cover
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+
+documentation:
+  stage: post-test
+  image: elixir:1.14.2
+  allow_failure: true
+  before_script:
+    - mix local.hex --force
+    - mix local.rebar --force
+  script:
+    - mix doctor
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'

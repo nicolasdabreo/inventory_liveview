@@ -1,0 +1,16 @@
+export REPLACE_OS_VARS=true
+
+## Required
+
+export SECRET_KEY_BASE=
+
+## Optional
+
+export LOG_LEVEL=info
+export POSTGRES_URL=
+export POSTGRES_SSL=
+export POSTGRES_POOL=
+export PHX_SERVER=
+export PORT=
+export HOST=
+export ECTO_IPV6=

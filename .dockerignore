@@ -1,0 +1,130 @@
+# flyctl launch added from .elixir_ls/.gitignore
+.elixir_ls/**/*
+
+# flyctl launch added from .gitignore
+# The directory Mix will write compiled artifacts to.
+_build
+
+# If you run "mix test --cover", coverage assets end up here.
+cover
+
+# The directory Mix downloads your dependencies sources to.
+deps
+
+# Where 3rd-party dependencies like ExDoc output generated docs.
+doc
+
+# Ignore .fetch files in case you like to edit your project deps locally.
+.fetch
+
+# If the VM crashes, it generates a dump, let's ignore it too.
+**/erl_crash.dump
+
+# Also ignore archive artifacts (built via "mix archive.build").
+**/*.ez
+
+# Ignore package tarball (built via "mix hex.build").
+**/mrp-*.tar
+
+# Ignore assets that are produced by build tools.
+priv/static/assets
+
+# Ignore digested assets cache.
+priv/static/cache_manifest.json
+
+# In case you use Node.js/npm, you want to ignore these.
+**/npm-debug.log
+assets/node_modules
+
+**/.elixir_ls
+
+.tmp
+tmp
+
+cover
+
+# flyctl launch added from deps/phoenix/.gitignore
+deps/phoenix/_build
+deps/phoenix/deps
+deps/phoenix/doc
+deps/phoenix/node_modules
+deps/phoenix/tmp
+
+deps/phoenix/assets/node_modules
+
+deps/phoenix/installer/_build
+deps/phoenix/installer/assets
+deps/phoenix/installer/deps
+deps/phoenix/installer/doc
+deps/phoenix/installer/phx_new-*.ez
+
+deps/phoenix/integration_test/_build
+deps/phoenix/integration_test/deps
+
+deps/phoenix/**/erl_crash.dump
+deps/phoenix/**/phoenix-*.ez
+
+# flyctl launch added from deps/phoenix_live_dashboard/.gitignore
+# The directory Mix will write compiled artifacts to.
+deps/phoenix_live_dashboard/_build
+
+# If you run "mix test --cover", coverage assets end up here.
+deps/phoenix_live_dashboard/cover
+
+# The directory Mix downloads your dependencies sources to.
+deps/phoenix_live_dashboard/deps
+
+# Where third-party dependencies like ExDoc output generated docs.
+deps/phoenix_live_dashboard/doc
+
+# Ignore .fetch files in case you like to edit your project deps locally.
+deps/phoenix_live_dashboard/.fetch
+
+# If the VM crashes, it generates a dump, let's ignore it too.
+deps/phoenix_live_dashboard/**/erl_crash.dump
+
+# Also ignore archive artifacts (built via "mix archive.build").
+deps/phoenix_live_dashboard/**/*.ez
+
+# Ignore package tarball (built via "mix hex.build").
+deps/phoenix_live_dashboard/**/phoenix_live_dashboard-*.tar
+
+deps/phoenix_live_dashboard/**/node_modules
+deps/phoenix_live_dashboard/**/tmp
+
+# flyctl launch added from deps/phoenix_live_dashboard/assets/.gitignore
+deps/phoenix_live_dashboard/assets/coverage
+
+# flyctl launch added from deps/phoenix_live_view/.gitignore
+# The directory Mix will write compiled artifacts to.
+deps/phoenix_live_view/_build
+
+# If you run "mix test --cover", coverage assets end up here.
+deps/phoenix_live_view/cover
+
+# The directory Mix downloads your dependencies sources to.
+deps/phoenix_live_view/deps
+
+# Where 3rd-party dependencies like ExDoc output generated docs.
+deps/phoenix_live_view/doc
+
+# Ignore .fetch files in case you like to edit your project deps locally.
+deps/phoenix_live_view/.fetch
+
+# If the VM crashes, it generates a dump, let's ignore it too.
+deps/phoenix_live_view/**/erl_crash.dump
+
+# Also ignore archive artifacts (built via "mix archive.build").
+deps/phoenix_live_view/**/*.ez
+
+# Ignore package tarball (built via "mix hex.build").
+deps/phoenix_live_view/**/phoenix_live_view-*.tar
+
+deps/phoenix_live_view/**/node_modules
+
+
+# flyctl launch added from deps/phoenix_live_view/assets/.gitignore
+deps/phoenix_live_view/assets/coverage
+
+.envrc
+.env
