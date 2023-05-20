@@ -25,7 +25,6 @@ defmodule MRP do
     end
   end
 
-
   @doc """
   When used, dispatch to the appropriate underlying functions.
   """

@@ -28,8 +28,7 @@ if ConfigHelpers.get_env("GITLAB_CI", false, :boolean) do
   config :mrp, MRP.Repo, url: ConfigHelpers.get_env("POSTGRES_URL", :no_default)
 end
 
-config :mrp, Web.Endpoint,
-  secret_key_base: ConfigHelpers.get_env("SECRET_KEY_BASE", :no_default)
+config :mrp, Web.Endpoint, secret_key_base: ConfigHelpers.get_env("SECRET_KEY_BASE", :no_default)
 
 logger_level =
   (config_env() == :test && :warn) || ConfigHelpers.get_env("LOG_LEVEL", :warn, :atom)
