@@ -15,7 +15,7 @@ variables:
   SECRET_KEY_BASE: PB9AUBuNWOw7awn8C2KuVT0eqcC/GJhuRsmfWs3wsyAj3uJ/ctmWBT32jI0DVSyZ
   PORT: "4000"
   POSTGRES_URL: postgres://postgres:postgres@postgres:5432/mrp_test
-  POSTGRES_DB: store_test
+  POSTGRES_DB: mrp_test
   POSTGRES_HOST: postgres
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: "postgres"

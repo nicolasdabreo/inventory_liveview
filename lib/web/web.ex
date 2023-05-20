@@ -83,7 +83,7 @@ defmodule Web do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import Web.CoreComponents
+      import Web.Components
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

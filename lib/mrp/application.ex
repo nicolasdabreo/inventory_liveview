@@ -1,6 +1,4 @@
 defmodule MRP.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -8,26 +6,19 @@ defmodule MRP.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       Web.Telemetry,
-      # Start the Ecto repository
       MRP.Repo,
-      # Start the PubSub system
+      {Oban, oban_config()},
       {Phoenix.PubSub, name: MRP.PubSub},
-      # Start the Endpoint (http/https)
       Web.Endpoint
-      # Start a worker by calling: MRP.Worker.start_link(arg)
-      # {MRP.Worker, arg}
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: MRP.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
+  defp oban_config, do: Application.fetch_env!(:mrp, Oban)
+
   @impl true
   def config_change(changed, _new, removed) do
     Web.Endpoint.config_change(changed, removed)

@@ -21,26 +21,6 @@
             </p>
           </a>
         </div>
-        <ul class="flex items-center justify-end gap-4 px-4 sm:px-6 lg:px-8">
-          <%= if @current_user do %>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900">
-              <%= @current_user.email %>
-            </li>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
-              <.link href={~p"/settings/profile"}>Settings</.link>
-            </li>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
-              <.link href={~p"/log_out"} method="delete">Log out</.link>
-            </li>
-          <% else %>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
-              <.link href={~p"/register"}>Register</.link>
-            </li>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700">
-              <.link href={~p"/log_in"}>Log in</.link>
-            </li>
-          <% end %>
-        </ul>
       </div>
     </header>
     

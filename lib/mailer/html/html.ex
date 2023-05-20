@@ -12,17 +12,17 @@ defmodule Mailer.HTML do
   def base_email_from_support(to) do
     new()
     |> to(to)
-    |> from({"Store", support_email()})
+    |> from({"MRP", support_email()})
   end
 
   def base_email_from_noreply(to) do
     new()
     |> to(to)
-    |> from({"Store", noreply_email()})
+    |> from({"MRP", noreply_email()})
   end
 
-  defp support_email, do: Application.get_env(:store, :support_email)
-  defp noreply_email, do: Application.get_env(:store, :noreply_email)
+  defp support_email, do: Application.get_env(:mrp, :support_email)
+  defp noreply_email, do: Application.get_env(:mrp, :noreply_email)
 
   def render_with_layout(email, heex) do
     html_body(

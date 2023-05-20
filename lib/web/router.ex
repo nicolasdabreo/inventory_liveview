@@ -10,18 +10,11 @@ defmodule Web.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
+  scope "/", Web.Pages do
+    pipe_through [:browser]
+
+    live_session :marketing do
+      live "/", LandingLive
+    end
   end
-
-  scope "/", Web do
-    pipe_through :browser
-
-    get "/", PageController, :home
-  end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", Web do
-  #   pipe_through :api
-  # end
 end

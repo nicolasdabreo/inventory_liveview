@@ -7,7 +7,7 @@ defmodule Mailer.Email do
   interface to the Swoosh mailer.
   """
 
-  use Swoosh.Mailer, otp_app: :store
+  use Swoosh.Mailer, otp_app: :mrp
 
   defmacro __using__(_) do
     quote do
