@@ -28,6 +28,12 @@ config :mrp, Web.Endpoint,
 # Other
 #
 
+config :triplex,
+  repo: MRP.Repo,
+  tenant_prefix: "mrp_",
+  reserved_tenants: ["www", "api", ~r/^db+$/],
+  tenant_field: :id
+
 config :esbuild,
   version: "0.17.11",
   default: [

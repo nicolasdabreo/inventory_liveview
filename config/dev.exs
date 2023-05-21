@@ -4,12 +4,12 @@ config :mrp, MRP.Repo,
   stacktrace: true,
   username: "postgres",
   password: "postgres",
-  database: "store_dev",
+  database: "mrp_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config(:mrp, Web.Endpoint,
+config :mrp, Web.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
   code_reloader: true,
@@ -22,11 +22,10 @@ config(:mrp, Web.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/store_web/(live|views)/.*(ex)$",
-      ~r"lib/store_web/templates/.*(eex)$"
+      ~r"lib/web/(live|views)/.*(ex)$",
+      ~r"lib/web/templates/.*(eex)$"
     ]
   ]
-)
 
 config :phoenix,
   stacktrace_depth: 20,

@@ -14,6 +14,7 @@ defmodule MRP do
       use Ecto.Schema
 
       import Ecto.Changeset
+      import Ecto.Query
 
       @primary_key {:id, :binary_id, autogenerate: true}
       @foreign_key_type :binary_id
@@ -24,6 +25,9 @@ defmodule MRP do
   def context do
     quote do
       import Ecto.Query, warn: false
+
+      alias Ecto.Multi
+      alias MRP.Repo
     end
   end
 

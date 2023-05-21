@@ -24,6 +24,7 @@ defmodule MRP.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import MRP.DataCase
+      import MRP.AccountsFixtures
     end
   end
 

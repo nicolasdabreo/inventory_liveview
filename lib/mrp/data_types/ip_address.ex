@@ -14,10 +14,10 @@ defmodule MRP.DataTypes.IPAddress do
 
     case Enum.map(parts, &Integer.parse/1) do
       [{a, ""}, {b, ""}, {c, ""}, {d, ""}]
-      when a in 0..255
-        and b in 0..255
-        and c in 0..255
-        and d in 0..255 ->
+      when a in 0..255 and
+             b in 0..255 and
+             c in 0..255 and
+             d in 0..255 ->
         {:ok, {a, b, c, d}}
 
       _data ->
