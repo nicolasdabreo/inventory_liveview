@@ -2,7 +2,8 @@ import Config
 
 config :mrp,
   ecto_repos: [MRP.Repo],
-  generators: [binary_id: true],
+  generators: [uuid: true],
+  migration_primary_key: [type: :uuid],
   migration_timestamps: [type: :utc_datetime],
   support_email: "help@mrp.com",
   noreply_email: "noreply@mrp.com"

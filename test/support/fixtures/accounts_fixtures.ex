@@ -4,13 +4,15 @@ defmodule MRP.AccountsFixtures do
   entities via the `MRP.Accounts` context.
   """
 
+  alias MRP.Accounts
+
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def valid_user_password, do: "hello world!"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      email: unique_user_email(),
-      password: valid_user_password()
+      primary_email: %{email: unique_user_email()},
+      password: %{password: valid_user_password()}
     })
   end
 
@@ -18,7 +20,7 @@ defmodule MRP.AccountsFixtures do
     {:ok, user} =
       attrs
       |> valid_user_attributes()
-      |> MRP.Accounts.register_user()
+      |> Accounts.register_user_with_password()
 
     user
   end

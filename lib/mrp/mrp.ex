@@ -16,7 +16,7 @@ defmodule MRP do
       import Ecto.Changeset
       import Ecto.Query
 
-      @primary_key {:id, :binary_id, autogenerate: true}
+      @primary_key {:id, Ecto.UUID, autogenerate: true}
       @foreign_key_type :binary_id
       @timestamps_opts [type: :utc_datetime]
     end
@@ -28,6 +28,7 @@ defmodule MRP do
 
       alias Ecto.Multi
       alias MRP.Repo
+      alias Mailer.Emails
     end
   end
 

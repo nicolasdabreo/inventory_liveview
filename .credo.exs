@@ -84,12 +84,6 @@
           #
           {Credo.Check.Design.AliasUsage,
            [priority: :low, if_nested_deeper_than: 2, if_called_more_often_than: 0]},
-          # You can also customize the exit_status of each check.
-          # If you don't want TODO comments to cause `mix credo` to fail, just
-          # set this value to 0 (zero).
-          #
-          {Credo.Check.Design.TagTODO, [exit_status: 2]},
-          {Credo.Check.Design.TagFIXME, []},
 
           #
           ## Readability Checks
@@ -99,7 +93,7 @@
           {Credo.Check.Readability.LargeNumbers, []},
           {Credo.Check.Readability.MaxLineLength, [priority: :low, max_length: 120]},
           {Credo.Check.Readability.ModuleAttributeNames, []},
-          {Credo.Check.Readability.ModuleDoc, []},
+          {Credo.Check.Readability.ModuleDoc, [priority: :low]},
           {Credo.Check.Readability.ModuleNames, []},
           {Credo.Check.Readability.ParenthesesInCondition, []},
           {Credo.Check.Readability.ParenthesesOnZeroArityDefs, []},
@@ -165,7 +159,6 @@
           {Credo.Check.Design.DuplicatedCode, []},
           {Credo.Check.Design.SkipTestWithoutComment, []},
           {Credo.Check.Readability.AliasAs, []},
-          {Credo.Check.Readability.BlockPipe, []},
           {Credo.Check.Readability.ImplTrue, []},
           {Credo.Check.Readability.MultiAlias, []},
           {Credo.Check.Readability.OneArityFunctionInPipe, []},
@@ -187,8 +180,6 @@
           {Credo.Check.Refactor.PassAsyncInTestCases, []},
           {Credo.Check.Refactor.PipeChainStart, []},
           {Credo.Check.Refactor.RejectFilter, []},
-          {Credo.Check.Refactor.VariableRebinding, []},
-          {Credo.Check.Warning.LazyLogging, []},
           {Credo.Check.Warning.LeakyEnvironment, []},
           {Credo.Check.Warning.MapGetUnsafePass, []},
           {Credo.Check.Warning.MixEnv, []},
@@ -205,9 +196,11 @@
           {Credo.Check.Readability.Specs, []},
           {Credo.Check.Refactor.ABCSize, []},
           {Credo.Check.Readability.OnePipePerLine, []},
-          {Credo.Check.Readability.NestedFunctionCalls, []}
-
-          # {Credo.Check.Refactor.MapInto, []},
+          {Credo.Check.Readability.NestedFunctionCalls, []},
+          {Credo.Check.Refactor.VariableRebinding, []},
+          {Credo.Check.Design.TagTODO, [exit_status: 2]},
+          {Credo.Check.Design.TagFIXME, []},
+          {Credo.Check.Readability.BlockPipe, []}
 
           #
           # Custom checks can be created using `mix credo.gen.check`.
