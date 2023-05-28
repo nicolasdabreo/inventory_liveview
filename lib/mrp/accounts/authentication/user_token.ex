@@ -1,9 +1,9 @@
-defmodule MRP.Accounts.UserToken do
+defmodule MRP.Accounts.Authentication.UserToken do
   @moduledoc false
 
   use MRP, :schema
 
-  alias MRP.Accounts.UserToken
+  alias __MODULE__, as: UserToken
 
   @hash_algorithm :sha256
   @rand_size 32
@@ -15,8 +15,6 @@ defmodule MRP.Accounts.UserToken do
   @change_email_validity_in_days 7
   @session_validity_in_days 60
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @foreign_key_type :binary_id
   schema "users_tokens" do
     field :token, :binary
     field :context, :string
@@ -147,7 +145,7 @@ defmodule MRP.Accounts.UserToken do
   database and if it has not expired (after @change_email_validity_in_days).
   The context must always start with "change:".
   """
-  def verify_change_email_token_query(token, "change:" <> _ = context) do
+  def verify_change_email_token_query(token, "change:" <> _inner = context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
@@ -177,7 +175,7 @@ defmodule MRP.Accounts.UserToken do
     from t in UserToken, where: t.user_id == ^user.id
   end
 
-  def user_and_contexts_query(user, [_ | _] = contexts) do
+  def user_and_contexts_query(user, [_a | _b] = contexts) do
     from t in UserToken, where: t.user_id == ^user.id and t.context in ^contexts
   end
 end

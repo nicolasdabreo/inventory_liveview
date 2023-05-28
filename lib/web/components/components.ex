@@ -248,7 +248,7 @@ defmodule Web.Components do
                range radio search select tel text textarea time url week)
   )
 
-  attr(:field, Phoenix.HTML.FormField,
+  attr(:field, :any,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
   )
 
@@ -263,6 +263,7 @@ defmodule Web.Components do
                 pattern placeholder readonly required rows size step)
 
   slot :inner_block
+  slot :trailing
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
@@ -331,6 +332,77 @@ defmodule Web.Components do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
+
+  def input(%{type: "password"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label for={@id}><%= @label %></.label>
+
+      <div class="relative">
+        <input
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={[
+            "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 box-border",
+            "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
+            "border-zinc-300 focus:border-zinc-400",
+            @errors != [] && "border-rose-400 focus:border-rose-400"
+          ]}
+          type="password"
+          autocomplete="new-password"
+          autocapitalize="none"
+          spellcheck="false"
+          autofocus=""
+          {@rest}
+        />
+        <.link
+          id={"#{@id}-visibility-toggle"}
+          phx-hook="PasswordVisibilityToggle"
+          class="box-border absolute inset-y-0 right-0 flex items-center rounded-r-lg cursor-pointer hover:bg-gray-100 m-[1px]"
+        >
+          <span class="px-3">
+            <.icon name="hero-eye-solid" class="flex-shrink-0 w-5 h-5 text-gray-600" />
+          </span>
+        </.link>
+      </div>
+
+      <.error :for={msg <- @errors}><%= msg %></.error>
+    </div>
+    """
+  end
+
+  def input(%{type: "email"} = assigns) do
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label for={@id}><%= @label %></.label>
+      <div class="relative">
+        <input
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={[
+            "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+            "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
+            "border-zinc-300 focus:border-zinc-400",
+            @errors != [] && "border-rose-400 focus:border-rose-400"
+          ]}
+          inputmode="email"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+          autofocus=""
+          {@rest}
+        />
+        <div :if={@trailing != []} class="absolute inset-y-0 right-0 flex items-center text-gray-500">
+          <%= render_slot(@trailing) %>
+        </div>
+      </div>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
@@ -558,12 +630,13 @@ defmodule Web.Components do
       <.icon name="hero-x-mark-solid" />
       <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
   """
+  attr :id, :string, required: false
   attr :name, :string, required: true
-  attr :class, :string, default: nil
+  attr :class, :string, default: "h-5 w-5"
 
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
-    <span class={[@name, @class]} />
+    <span class={[@name, @class, "flex-shrink-0"]} />
     """
   end
 

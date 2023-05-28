@@ -3,9 +3,8 @@ defmodule MRP.Repo.Migrations.CreateTenants do
 
   def change do
     create table(:tenants, primary_key: false) do
-      add :id, :binary_id, primary_key: true
-      add :name, :string
-
+      add :id, :uuid, primary_key: true
+      add :name, :string, null: false
       timestamps()
     end
 

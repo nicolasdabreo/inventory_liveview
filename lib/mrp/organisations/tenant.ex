@@ -1,8 +1,8 @@
-defmodule MRP.Organisations.Organisation do
+defmodule MRP.Organisations.Tenant do
   use MRP, :schema
 
-  schema "parties" do
-    field :name, :string, source: :surname
+  schema "tenants" do
+    field :name, :string
 
     timestamps()
   end
