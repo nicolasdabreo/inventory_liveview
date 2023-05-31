@@ -6,7 +6,7 @@ defmodule Web.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {Web.Layouts, :root}
+    plug :put_root_layout, {Web.Components.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -26,7 +26,7 @@ defmodule Web.Router do
     post "/login", SessionController, :create
     # get "/oauth/callbacks/:provider", OAuthCallbackController, :new
 
-    live_session :authentication do
+    live_session :authentication, layout: {Web.Components.Layouts, :auth} do
       live "/login/identifier", Login, :identifier
       live "/login/password", Login, :password
       live "/login/organisations", Organisations, :index

@@ -1,4 +1,4 @@
-defmodule Web.Layouts do
+defmodule Web.Components.Layouts do
   @moduledoc false
 
   use Web, :html

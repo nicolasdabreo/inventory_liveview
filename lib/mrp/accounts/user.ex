@@ -43,7 +43,7 @@ defmodule MRP.Accounts.User do
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def password_registration_changeset(user, attrs, opts \\ []) do
+  def password_registration_changeset(%User{} = user, attrs, opts \\ []) do
     user
     |> cast(attrs, [])
     |> cast_assoc(:primary_email, required: true, with: {Email, :registration_changeset, opts})

@@ -1,0 +1,42 @@
+<header class="py-10 bg-violet-50">
+  <.container class="flex flex-row items-center justify-between text-sm">
+    <a href="/">
+      <div class="flex items-center flex-shrink-0">
+        <img class="block w-auto h-8 lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=500" alt="Your Company">
+        <img class="hidden w-auto h-8 lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=500" alt="Your Company">
+      </div>
+    </a>
+
+    <div class="relative">
+      <.menu class="w-32">
+        <:button :let={{toggle_menu, button_id}}>
+          <button
+            id={button_id}
+            phx-click={toggle_menu.()}
+            type="button"
+            class="focus:border-violet-500 focus:ring-4 focus:outline-none focus:ring-violet-200 relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm border sm:text-sm sm:leading-6"
+          >
+            <span class="block truncate">English</span>
+            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <.icon name="hero-chevron-up-down-solid" class="text-gray-400" />
+            </span>
+          </button>
+        </:button>
+        <:item>
+          <.menu_link href="#">English</.menu_link>
+        </:item>
+        <:item>
+          <.menu_link href="#">Polski</.menu_link>
+        </:item>
+      </.menu>
+    </div>
+  </.container>
+</header>
+<main class="px-4 py-20 sm:px-6 lg:px-8 bg-violet-50">
+  <div class="max-w-2xl mx-auto">
+    <.flash_group flash={@flash} />
+    <div class="max-w-lg p-8 mx-auto bg-white border border-gray-300 rounded-lg">
+    <%= @inner_content %>
+    </div>
+  </div>
+</main>
