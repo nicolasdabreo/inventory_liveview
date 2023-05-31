@@ -42,7 +42,7 @@ defmodule Web do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: Web.Layouts]
+        layouts: [html: Web.Components.Layouts]
 
       import Plug.Conn
 
@@ -53,7 +53,7 @@ defmodule Web do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {Web.Layouts, :app}
+        layout: {Web.Components.Layouts, :app}
 
       unquote(html_helpers())
     end
@@ -84,8 +84,11 @@ defmodule Web do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
+
       # Core UI components and translation
-      import Web.Components
+      import Web.Components.Core
+      import Web.Components.Data
+      import Web.Components.Form
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

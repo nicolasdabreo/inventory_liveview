@@ -1,1 +1,31 @@
-Not Found
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="h-full scroll-smooth bg-white antialiased [font-feature-settings:'ss01']"
+  style="scrollbar-gutter: stable;"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title suffix={assigns[:page_title_suffix] || " | MRP"}>
+      Page not found
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body>
+    <main class="grid min-h-full px-6 py-24 bg-white place-items-center sm:py-32 lg:px-8">
+    <div class="text-center">
+        <p class="text-base font-semibold text-violet-500">404</p>
+        <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Page not found</h1>
+        <p class="mt-6 text-base leading-7 text-gray-600">Sorry, we couldn’t find the page you’re looking for.</p>
+        <div class="flex items-center justify-center mt-10 gap-x-6">
+        <.button color="violet-500" href="/">Go back home</.button>
+        <.button color="white" href="#">Contact support <span aria-hidden="true">&rarr;</span></.button>
+        </div>
+    </div>
+    </main>
+  </body>
+</html>

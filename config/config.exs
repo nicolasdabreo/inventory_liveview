@@ -20,7 +20,7 @@ config :mrp, Oban,
 config :mrp, Mailer.Email, adapter: Swoosh.Adapters.Local
 
 config :mrp, Web.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "mrp.com"],
   render_errors: [formats: [html: Web.Pages.ErrorHTML], layout: false],
   pubsub_server: MRP.PubSub,
   live_view: [signing_salt: "Z3i1EZ84"]
