@@ -65,7 +65,10 @@ defmodule Web.Pages.AuthenticationLive.Login do
 
       <div :if={@live_action == :identifier} class="mt-10 text-sm text-center">
         Don't have an account?
-        <.link navigate={~p"/register/identifier"} class="font-semibold text-violet-500 hover:underline">
+        <.link
+          navigate={~p"/register/identifier"}
+          class="font-semibold text-violet-500 hover:underline"
+        >
           Sign up
         </.link>
       </div>
@@ -153,5 +156,9 @@ defmodule Web.Pages.AuthenticationLive.Login do
 
   def handle_event("save", _params, %{assigns: %{live_action: :password}} = socket) do
     {:noreply, assign(socket, :trigger_submit, true)}
+  end
+
+  def handle_event(_event, _params, socket) do
+    {:noreply, socket}
   end
 end

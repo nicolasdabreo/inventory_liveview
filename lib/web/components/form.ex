@@ -82,13 +82,7 @@ defmodule Web.Components.Form do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
-      <select
-        id={@id}
-        name={@name}
-        class={[input_classes(), @class]}
-        multiple={@multiple}
-        {@rest}
-      >
+      <select id={@id} name={@name} class={[input_classes(), @class]} multiple={@multiple} {@rest}>
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>

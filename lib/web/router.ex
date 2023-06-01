@@ -9,12 +9,14 @@ defmodule Web.Router do
     plug :put_root_layout, {Web.Components.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug Cldr.Plug.AcceptLanguage, cldr_backend: Web.Cldr
+    plug Web.Plugs.I18n
   end
 
   scope "/", Web.Pages do
     pipe_through [:browser]
 
-    live_session :marketing do
+    live_session :marketing, on_mount: [Web.Assigns] do
       live "/", LandingLive
     end
   end
@@ -26,7 +28,9 @@ defmodule Web.Router do
     post "/login", SessionController, :create
     # get "/oauth/callbacks/:provider", OAuthCallbackController, :new
 
-    live_session :authentication, layout: {Web.Components.Layouts, :auth} do
+    live_session :authentication,
+      on_mount: [Web.Assigns],
+      layout: {Web.Components.Layouts, :auth} do
       live "/login/identifier", Login, :identifier
       live "/login/password", Login, :password
       live "/login/organisations", Organisations, :index
