@@ -8,7 +8,7 @@ defmodule Web.Pages.AuthenticationLive.Registration do
 
   def render(assigns) do
     ~H"""
-    <div class="max-w-sm mx-auto">
+    <div>
       <.header class="text-center">
         Create an account
         <:subtitle>

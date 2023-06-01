@@ -55,6 +55,13 @@ defmodule MRP.MixProject do
       {:mjml, "~> 1.5"},
       {:triplex, "~> 1.3.0"},
 
+      # i18n
+      {:ex_cldr_plugs, "~> 1.3"},
+      {:ex_cldr, "~> 2.37"},
+      {:ex_money, "~> 5.13"},
+      {:ex_cldr_dates_times, "~> 2.13"},
+      {:ex_cldr_calendars, "~> 1.22"},
+
       # dev & test
       {:phoenix_live_reload, "~> 1.4", only: :dev},
       {:floki, "~> 0.34", only: :test},

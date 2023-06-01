@@ -342,31 +342,6 @@ defmodule Web.Components.Core do
   end
 
   @doc """
-  Shows the flash group with standard titles and content.
-
-  ## Examples
-
-      <.flash_group flash={@flash} />
-  """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
-
-  def flash_group(assigns) do
-    ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
-    <.flash
-      id="disconnected"
-      kind={:error}
-      phx-disconnected={show("#disconnected")}
-      phx-connected={hide("#disconnected")}
-      hidden
-    >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
-    </.flash>
-    """
-  end
-
-  @doc """
   A generic dropdown menu component.
 
   The button slot provides an annonymous toggling function and an id that
@@ -439,7 +414,7 @@ defmodule Web.Components.Core do
     ~H"""
     <.link
       class={[
-        "block px-4 py-2 text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900",
+        "block px-4 py-2 text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900 ring-inset",
         @class
       ]}
       {@rest}

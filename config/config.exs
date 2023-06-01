@@ -25,14 +25,18 @@ config :mrp, Web.Endpoint,
   pubsub_server: MRP.PubSub,
   live_view: [signing_salt: "Z3i1EZ84"]
 
+config :mrp, Web.Gettext, default_locale: "en", locales: ~w(en pl)
+
 #
 # Other
 #
 
+config :ex_cldr, :default_backend, Web.Cldr
+
 config :triplex,
   repo: MRP.Repo,
   tenant_prefix: "mrp_",
-  reserved_tenants: ["www", "api", ~r/^db+$/],
+  reserved_tenants: ["www", "account", "api", ~r/^db+$/],
   tenant_field: :id
 
 config :esbuild,

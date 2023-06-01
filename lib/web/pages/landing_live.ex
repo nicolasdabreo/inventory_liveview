@@ -33,8 +33,16 @@ defmodule Web.Pages.LandingLive do
           <div class="flex flex-row items-center lg:gap-x-12">
             <a href="/">
               <div class="flex items-center flex-shrink-0">
-                <img class="block w-auto h-8 lg:hidden" src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=500" alt="Your Company">
-                <img class="hidden w-auto h-8 lg:block" src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=500" alt="Your Company">
+                <img
+                  class="block w-auto h-8 lg:hidden"
+                  src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=500"
+                  alt="Your Company"
+                />
+                <img
+                  class="hidden w-auto h-8 lg:block"
+                  src="https://tailwindui.com/img/logos/mark.svg?color=violet&shade=500"
+                  alt="Your Company"
+                />
               </div>
             </a>
             <div class="hidden lg:flex w-fit lg:gap-x-6">
