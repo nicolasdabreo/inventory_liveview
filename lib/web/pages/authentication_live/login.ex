@@ -1,8 +1,6 @@
 defmodule Web.Pages.AuthenticationLive.Login do
   use Web, :live_view
 
-  import Web.Pages.AuthenticationLive.Components
-
   alias MRP.Accounts.Email
 
   def render(assigns) do
@@ -64,26 +62,13 @@ defmodule Web.Pages.AuthenticationLive.Login do
       </.simple_form>
 
       <div :if={@live_action == :identifier} class="mt-10 text-sm text-center">
-        Don't have an account?
+        Not a customer yet?
         <.link
-          navigate={~p"/register/identifier"}
+          navigate={~p"/register"}
           class="font-semibold text-violet-500 hover:underline"
         >
           Sign up
         </.link>
-      </div>
-
-      <div :if={@live_action == :identifier} class="mt-10">
-        <div class="relative">
-          <div class="absolute inset-0 flex items-center" aria-hidden="true">
-            <div class="w-full border-t border-gray-200"></div>
-          </div>
-          <div class="relative flex justify-center text-sm font-medium leading-6">
-            <span class="px-6 text-gray-900 bg-white">Or continue with</span>
-          </div>
-        </div>
-
-        <.oauth_providers />
       </div>
     </div>
     """

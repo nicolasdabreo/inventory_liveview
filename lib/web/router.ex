@@ -33,9 +33,7 @@ defmodule Web.Router do
       layout: {Web.Components.Layouts, :auth} do
       live "/login/identifier", Login, :identifier
       live "/login/password", Login, :password
-      live "/login/organisations", Organisations, :index
-      live "/register/identifier", Registration, :identifier
-      live "/register/password", Registration, :password
+      live "/register", Registration, :register
     end
   end
 
@@ -47,7 +45,6 @@ defmodule Web.Router do
 
   scope "/", Web do
     get "/login", Redirect, to: "/login/identifier"
-    get "/register", Redirect, to: "/register/identifier"
   end
 
   if Mix.env() == :dev do

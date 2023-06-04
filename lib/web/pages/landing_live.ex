@@ -116,7 +116,7 @@ defmodule Web.Pages.LandingLive do
         any situation.
       </p>
       <div class="flex justify-center mt-10 gap-x-6">
-        <.button navigate="/register/identifier" color="gray">Get 1 month free</.button>
+        <.button navigate="/register" color="gray">Get 1 month free</.button>
         <.button navigate={~p"/"} variant="outline" color="white">
           <.icon name="hero-play-solid" class="w-4 h-4" />
           <span class="ml-3">Watch video</span>
