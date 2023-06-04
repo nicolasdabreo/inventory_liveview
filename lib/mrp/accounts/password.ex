@@ -1,10 +1,8 @@
 defmodule MRP.Accounts.Password do
   use MRP, :schema
 
-  @derive {Inspect, except: [:password]}
   schema "credentials" do
     field :hashed_password, :string, source: :value
-    field :password, :string, virtual: true
     field :type, Ecto.Enum, values: [:password]
     belongs_to :user, MRP.Accounts.User
 
@@ -12,47 +10,22 @@ defmodule MRP.Accounts.Password do
   end
 
   @doc """
-  Changeset for creating a password based password.
-
-  ## Options
-
-    * `:hash_password` - Hashes the password so it can be stored securely
-      in the database and ensures the password field is cleared to prevent
-      leaks in the logs. If password hashing is not needed and clearing the
-      password field is not desired (like when using this changeset for
-      validations on a LiveView form), this option can be set to `false`.
-      Defaults to `true`.
-
+  Changeset for creating a password based credential.
   """
-  def registration_changeset(identity, params \\ %{}, opts \\ []) do
-    identity
-    |> cast(params, [:password])
-    |> validate_password(opts)
+  def registration_changeset(password, params \\ %{}) do
+    password
     |> put_change(:type, :password)
     |> assoc_constraint(:user)
+    |> hash_password(params)
   end
 
-  defp validate_password(changeset, opts) do
+  defp hash_password(%Ecto.Changeset{valid?: true} = changeset, %{password: password}) do
     changeset
-    |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
-    |> validate_confirmation(:password, message: "does not match password")
-    |> maybe_hash_password(opts)
+    |> validate_length(:password, max: 72, count: :bytes)
+    |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
   end
 
-  defp maybe_hash_password(changeset, opts) do
-    hash_password? = Keyword.get(opts, :hash_password, true)
-    password = get_change(changeset, :password)
-
-    if hash_password? && password && changeset.valid? do
-      changeset
-      |> validate_length(:password, max: 72, count: :bytes)
-      |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
-      |> delete_change(:password)
-    else
-      changeset
-    end
-  end
+  defp hash_password(changeset, _params), do: changeset
 
   @doc """
   Verifies the password.

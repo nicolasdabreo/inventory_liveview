@@ -9,8 +9,6 @@ defmodule MRP.Accounts.User do
   alias MRP.Accounts.Identity
 
   schema "users" do
-    field :party_id, :string
-
     has_one :primary_email, Email
     has_one :notification_email, Email
     has_many :linked_emails, Email
@@ -43,10 +41,10 @@ defmodule MRP.Accounts.User do
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def password_registration_changeset(%User{} = user, attrs, opts \\ []) do
+  def password_registration_changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [])
-    |> cast_assoc(:primary_email, required: true, with: {Email, :registration_changeset, opts})
-    |> cast_assoc(:password, required: true, with: {Password, :registration_changeset, opts})
+    |> cast_assoc(:primary_email, required: true, with: &Email.registration_changeset/2)
+    |> cast_assoc(:password, required: true, with: &Password.registration_changeset/2)
   end
 end

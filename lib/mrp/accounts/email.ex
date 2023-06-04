@@ -13,10 +13,11 @@ defmodule MRP.Accounts.Email do
   Validates email address creation for account registration with email and
   password.
   """
-  def registration_changeset(email, attrs, opts \\ []) do
+  def registration_changeset(email, attrs) do
     email
     |> cast(attrs, [:email])
-    |> validate_email(opts)
+    |> validate_required([:email])
+    |> validate_unique_email()
     |> assoc_constraint(:user)
   end
 
@@ -33,11 +34,12 @@ defmodule MRP.Accounts.Email do
 
   It requires the email to change otherwise an error is added.
   """
-  def email_changeset(email \\ %__MODULE__{}, attrs, opts \\ []) do
+  def email_changeset(email \\ %__MODULE__{}, attrs) do
     changeset =
       email
       |> cast(attrs, [:email])
-      |> validate_email(opts)
+      |> validate_required([:email])
+      |> validate_unique_email()
 
     case changeset do
       %{changes: %{email: _}} = changeset -> changeset
@@ -45,21 +47,9 @@ defmodule MRP.Accounts.Email do
     end
   end
 
-  defp validate_email(changeset, opts) do
+  defp validate_unique_email(changeset) do
     changeset
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
-    |> validate_length(:email, max: 160)
-    |> maybe_validate_unique_email(opts)
-  end
-
-  defp maybe_validate_unique_email(changeset, opts) do
-    if Keyword.get(opts, :validate_email, true) do
-      changeset
-      |> unsafe_validate_unique(:email, MRP.Repo)
-      |> unique_constraint(:email)
-    else
-      changeset
-    end
+    |> unsafe_validate_unique(:email, MRP.Repo)
+    |> unique_constraint(:email)
   end
 end

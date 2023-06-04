@@ -3,14 +3,15 @@ defmodule Web.Pages.AuthenticationLive.Registration do
 
   alias MRP.Accounts
   alias MRP.Accounts.User
+  alias Web.Forms.RegistrationForm
 
   def render(assigns) do
     ~H"""
     <div>
       <.header class="text-center">
-        Create an account
+        Start your 1 month free trial
         <:subtitle>
-          We require you to confirm your email address after registration, so make sure its correct!
+          We'll get in contact to confirm your account after registration, so make sure your email is correct!
         </:subtitle>
       </.header>
 
@@ -26,20 +27,15 @@ defmodule Web.Pages.AuthenticationLive.Registration do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.inputs_for :let={pef} field={@form[:primary_email]}>
-          <.input
-            field={pef[:email]}
-            value={@email}
-            type="email"
-            label="Email"
-            required
-            autofocus
-          />
-        </.inputs_for>
+        <.input
+          field={@form[:email]}
+          type="email"
+          label="Email"
+          required
+          autofocus
+        />
 
-        <.inputs_for :let={pf} field={@form[:password]}>
-          <.input field={pf[:password]} type="password" label="Password" required />
-        </.inputs_for>
+        <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
           <.button
@@ -53,51 +49,48 @@ defmodule Web.Pages.AuthenticationLive.Registration do
       </.simple_form>
 
       <div class="mt-10 text-sm text-center">
-            Already a customer?
-            <.link navigate={~p"/login/identifier"} class="font-semibold text-violet-500">
-              Log in
-            </.link>
+        Already a customer?
+        <.link navigate={~p"/login"} class="font-semibold text-violet-500">
+          Log in
+        </.link>
       </div>
     </div>
     """
   end
 
   def mount(_params, _session, socket) do
-    changeset = Accounts.change_user_registration(%User{})
+    form = RegistrationForm.form(%{})
 
     socket =
       socket
       |> assign(:page_title, "Create account")
       |> assign(trigger_submit: false, check_errors: false)
       |> assign(email: nil)
-      |> assign_form(changeset)
+      |> assign(form: form)
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
 
-  def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.register_user_with_password(user_params) do
-      {:ok, user} ->
-        changeset = Accounts.change_user_registration(user)
-        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
+  def handle_event("save", %{"register" => params}, socket) do
+    with {:ok, attributes} <- RegistrationForm.attributes(params),
+      {:ok, user} <- Accounts.register_user_with_password(attributes) do
+        {:ok, _} =
+          Accounts.deliver_email_verification_instructions(
+            user.primary_email,
+            &url(~p"/emails/verify/#{&1}")
+          )
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+        form = RegistrationForm.form()
+        {:noreply, socket |> assign(form: form, trigger_submit: true)}
+      else
+        {:error, %Ecto.Changeset{}} ->
+          form = RegistrationForm.form(params)
+          {:noreply, socket |> assign(form: form, check_errors: true)}
     end
   end
 
-  def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_registration(%User{}, user_params)
-    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "user")
-
-    if changeset.valid? do
-      assign(socket, form: form, check_errors: false)
-    else
-      assign(socket, form: form)
-    end
+  def handle_event("validate", %{"register" => params}, socket) do
+    form = RegistrationForm.form(params) |> IO.inspect()
+    {:noreply, assign(socket, :form, form)}
   end
 end
