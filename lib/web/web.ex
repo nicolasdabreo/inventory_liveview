@@ -32,6 +32,15 @@ defmodule Web do
     end
   end
 
+  def form do
+    quote do
+      use Ecto.Schema
+
+      import Ecto.Changeset
+      import Phoenix.Component, only: [to_form: 2]
+    end
+  end
+
   def channel do
     quote do
       use Phoenix.Channel

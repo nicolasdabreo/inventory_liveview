@@ -1,7 +1,7 @@
 defmodule Web.Pages.AuthenticationLive.Login do
   use Web, :live_view
 
-  alias MRP.Accounts.Email
+  alias Web.Forms.LoginForm
 
   def render(assigns) do
     ~H"""
@@ -13,42 +13,24 @@ defmodule Web.Pages.AuthenticationLive.Login do
       <.simple_form
         for={@form}
         id={"login_form_#{@live_action}"}
-        action={@form_action}
-        phx-submit="save"
-        phx-change="validate"
-        phx-trigger-action={@trigger_submit}
+        action={~p"/login"}
+        phx-update="ignore"
         method="post"
       >
-        <%= case @live_action do %>
-          <% :identifier -> %>
-            <.input
-              field={@form[:email]}
-              value={@email}
-              type="email"
-              label="Email"
-              required
-              autofocus
-            />
-          <% :password -> %>
-            <.input field={@form[:email]} type="hidden" value={@email} />
-            <.input field={nil} name={nil} value={@email} type="email" label="Email" disabled>
-              <:trailing>
-                <.link
-                  class="px-1 m-2 text-sm font-semibold rounded-md text-violet-500 hover:underline"
-                  patch={~p"/login/identifier"}
-                >
-                  Edit
-                </.link>
-              </:trailing>
-            </.input>
-            <.input field={@form[:password]} type="password" label="Password" required />
+        <.input
+          field={@form[:email]}
+          type="email"
+          label="Email"
+          required
+          autofocus
+        />
+        <.input field={@form[:password]} type="password" label="Password" required />
 
-            <div :if={@live_action == :password} class="mt-10 text-sm text-center">
-              <.link href={} class="font-semibold text-violet-500 hover:underline">
-                Forgot your password?
-              </.link>
-            </div>
-        <% end %>
+        <div class="mt-10 text-sm text-center">
+          <.link href={} class="font-semibold text-violet-500 hover:underline">
+            Forgot your password?
+          </.link>
+        </div>
 
         <:actions>
           <.button
@@ -61,7 +43,7 @@ defmodule Web.Pages.AuthenticationLive.Login do
         </:actions>
       </.simple_form>
 
-      <div :if={@live_action == :identifier} class="mt-10 text-sm text-center">
+      <div class="mt-10 text-sm text-center">
         Not a customer yet?
         <.link
           navigate={~p"/register"}
@@ -76,74 +58,7 @@ defmodule Web.Pages.AuthenticationLive.Login do
 
   def mount(_params, _session, socket) do
     email = live_flash(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email}, as: "user")
-
-    {:ok,
-     socket
-     |> assign(:page_title, "Login")
-     |> assign(:form_action, nil)
-     |> assign(:trigger_submit, false)
-     |> assign(:email, email), temporary_assigns: [form: form]}
-  end
-
-  def handle_params(_uri, params, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :identifier, _params) do
-    socket
-  end
-
-  defp apply_action(socket, :password, _params) do
-    if socket.assigns.email do
-      assign(socket, :form_action, "/login")
-    else
-      push_patch(socket, to: ~p"/login/identifier")
-    end
-  end
-
-  defp apply_action(socket, _invalid_action, _params) do
-    push_patch(socket, to: ~p"/login/identifier")
-  end
-
-  def handle_event(
-        "validate",
-        %{"user" => user_params},
-        %{assigns: %{live_action: :identifier}} = socket
-      ) do
-    changeset = Email.email_changeset(%Email{}, user_params, validate_email: false)
-    {:noreply, assign(socket, :form, to_form(changeset, as: "user"))}
-  end
-
-  def handle_event("validate", _params, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event(
-        "save",
-        %{"user" => user_params},
-        %{assigns: %{live_action: :identifier}} = socket
-      ) do
-    changeset =
-      %Email{}
-      |> Email.email_changeset(user_params, validate_email: false)
-      |> Map.put(:action, :validate)
-
-    email = Ecto.Changeset.get_change(changeset, :email)
-    socket = assign(socket, :email, email)
-
-    if changeset.valid? do
-      {:noreply, push_patch(socket, to: ~p"/login/password")}
-    else
-      {:noreply, assign(socket, :form, to_form(changeset, as: "user"))}
-    end
-  end
-
-  def handle_event("save", _params, %{assigns: %{live_action: :password}} = socket) do
-    {:noreply, assign(socket, :trigger_submit, true)}
-  end
-
-  def handle_event(_event, _params, socket) do
-    {:noreply, socket}
+    form = LoginForm.form(%{"email" => email})
+    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end

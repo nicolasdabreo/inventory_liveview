@@ -2,6 +2,10 @@
 defmodule Web.Router do
   use Web, :router
 
+  import Web.Authenticate
+
+  alias Web.Authenticate
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -26,13 +30,11 @@ defmodule Web.Router do
 
     delete "/logout", SessionController, :delete
     post "/login", SessionController, :create
-    # get "/oauth/callbacks/:provider", OAuthCallbackController, :new
 
     live_session :authentication,
       on_mount: [Web.Assigns],
       layout: {Web.Components.Layouts, :auth} do
-      live "/login/identifier", Login, :identifier
-      live "/login/password", Login, :password
+      live "/login", Login, :login
       live "/register", Registration, :register
     end
   end
@@ -44,7 +46,6 @@ defmodule Web.Router do
   # Redirects
 
   scope "/", Web do
-    get "/login", Redirect, to: "/login/identifier"
   end
 
   if Mix.env() == :dev do
