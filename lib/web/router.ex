@@ -31,6 +31,13 @@ defmodule Web.Router do
     delete "/logout", SessionController, :delete
     post "/login", SessionController, :create
 
+    live_session :verification, on_mount: [Authenticate] do
+      live "/emails/verify/:token", Verification, :edit
+      live "/emails/verify", VerificationInstructions, :new
+    end
+
+    pipe_through [:redirect_if_user_is_authenticated]
+
     live_session :authentication,
       on_mount: [Web.Assigns],
       layout: {Web.Components.Layouts, :auth} do

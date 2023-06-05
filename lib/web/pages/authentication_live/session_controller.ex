@@ -23,7 +23,7 @@ defmodule Web.Pages.AuthenticationLive.SessionController do
     create(conn, params, "Welcome back!")
   end
 
-  defp create(conn, %{"login" => user_params}, info) do
+  defp create(conn, %{"user" => user_params}, info) do
     email = user_params["email"]
     with {:ok, %{email: email, password: password}} <- LoginForm.attributes(user_params),
       %User{} = user <- Accounts.get_user_by_email_and_password(email, password) do

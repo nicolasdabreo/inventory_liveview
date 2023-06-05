@@ -7,6 +7,7 @@ defmodule MRP.Repo.Migrations.CreateUsers do
     create table(:users, primary_key: false) do
       add :id, :uuid, primary_key: true
       add :party_id, references(:parties, type: :uuid, on_delete: :delete_all)
+
       timestamps()
     end
 
@@ -15,6 +16,7 @@ defmodule MRP.Repo.Migrations.CreateUsers do
     create table(:emails, primary_key: false) do
       add :id, :uuid, primary_key: true
       add :email, :citext, null: false
+      add :tags, {:array, :string}
       add :verified_at, :naive_datetime
       add :user_id, references(:users, type: :uuid, on_delete: :delete_all)
       timestamps()
@@ -22,6 +24,7 @@ defmodule MRP.Repo.Migrations.CreateUsers do
 
     create index(:emails, [:id])
     create unique_index(:emails, [:email])
+    execute("create index emails_tags_index on emails using gin (tags);")
 
     create table(:credentials, primary_key: false) do
       add :id, :uuid, primary_key: true

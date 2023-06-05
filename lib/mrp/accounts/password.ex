@@ -14,6 +14,7 @@ defmodule MRP.Accounts.Password do
   """
   def registration_changeset(password, params \\ %{}) do
     password
+    |> cast(params, [])
     |> put_change(:type, :password)
     |> assoc_constraint(:user)
     |> hash_password(params)
@@ -21,7 +22,6 @@ defmodule MRP.Accounts.Password do
 
   defp hash_password(%Ecto.Changeset{valid?: true} = changeset, %{password: password}) do
     changeset
-    |> validate_length(:password, max: 72, count: :bytes)
     |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
   end
 

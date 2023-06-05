@@ -1,8 +1,11 @@
 defmodule MRP.Accounts.Email do
   use MRP, :schema
 
+  @email_tags ~w(primary notifications public)
+
   schema "emails" do
     field :email, :string
+    field :tags, {:array, :string}, default: []
     field :verified_at, :naive_datetime
     belongs_to :user, MRP.Accounts.User
 
@@ -15,10 +18,13 @@ defmodule MRP.Accounts.Email do
   """
   def registration_changeset(email, attrs) do
     email
-    |> cast(attrs, [:email])
+    |> cast(attrs, [:email, :tags])
+    |> put_change(:tags, ["primary"])
     |> validate_required([:email])
     |> validate_unique_email()
     |> assoc_constraint(:user)
+    |> validate_subset(:tags, @email_tags)
+    |> sort_array(:tags)
   end
 
   @doc """
@@ -37,9 +43,11 @@ defmodule MRP.Accounts.Email do
   def email_changeset(email \\ %__MODULE__{}, attrs) do
     changeset =
       email
-      |> cast(attrs, [:email])
+      |> cast(attrs, [:email, :tags])
       |> validate_required([:email])
       |> validate_unique_email()
+      |> validate_subset(:tags, @email_tags)
+      |> sort_array(:tags)
 
     case changeset do
       %{changes: %{email: _}} = changeset -> changeset
@@ -52,4 +60,6 @@ defmodule MRP.Accounts.Email do
     |> unsafe_validate_unique(:email, MRP.Repo)
     |> unique_constraint(:email)
   end
+
+  defp sort_array(changeset, field), do: update_change(changeset, field, &(Enum.sort(&1)))
 end

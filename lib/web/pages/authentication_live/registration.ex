@@ -2,7 +2,6 @@ defmodule Web.Pages.AuthenticationLive.Registration do
   use Web, :live_view
 
   alias MRP.Accounts
-  alias MRP.Accounts.User
   alias Web.Forms.RegistrationForm
 
   def render(assigns) do
@@ -21,6 +20,7 @@ defmodule Web.Pages.AuthenticationLive.Registration do
         phx-submit="save"
         phx-change="validate"
         phx-trigger-action={@trigger_submit}
+        action={~p"/login?_action=registered"}
         method="post"
       >
         <.error :if={@check_errors}>
@@ -71,14 +71,16 @@ defmodule Web.Pages.AuthenticationLive.Registration do
     {:ok, socket, temporary_assigns: [form: nil]}
   end
 
-  def handle_event("save", %{"register" => params}, socket) do
-    with {:ok, attributes} <- RegistrationForm.attributes(params),
-      {:ok, user} <- Accounts.register_user_with_password(attributes) do
+  def handle_event("save", %{"user" => params}, socket) do
+    with {:ok, attributes} <- RegistrationForm.attributes(params) |> IO.inspect(),
+      {:ok, user} <- Accounts.register_user_with_password(attributes) |> IO.inspect() do
         {:ok, _} =
           Accounts.deliver_email_verification_instructions(
+            user,
             user.primary_email,
             &url(~p"/emails/verify/#{&1}")
           )
+          |> IO.inspect()
 
         form = RegistrationForm.form()
         {:noreply, socket |> assign(form: form, trigger_submit: true)}
@@ -89,7 +91,7 @@ defmodule Web.Pages.AuthenticationLive.Registration do
     end
   end
 
-  def handle_event("validate", %{"register" => params}, socket) do
+  def handle_event("validate", %{"user" => params}, socket) do
     form = RegistrationForm.form(params) |> IO.inspect()
     {:noreply, assign(socket, :form, form)}
   end

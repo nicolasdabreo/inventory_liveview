@@ -30,7 +30,7 @@ defmodule Web.Forms.LoginForm do
   def form(attributes \\ @defaults) do
     %__MODULE__{}
     |> cast(attributes, @attributes)
-    |> to_form(as: "login")
+    |> to_form(as: "user")
   end
 
   @spec attributes(Ecto.Changeset.t()) :: {:ok, map()} | {:error, Ecto.Changeset.t()}

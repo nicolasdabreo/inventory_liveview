@@ -11,7 +11,9 @@ defmodule MRP.Accounts.User do
   schema "users" do
     has_one :primary_email, Email
     has_one :notification_email, Email
+    has_one :public_email, Email
     has_many :linked_emails, Email
+
     has_one :password, Password
     has_many :identities, Identity
 

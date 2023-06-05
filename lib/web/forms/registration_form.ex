@@ -24,7 +24,7 @@ defmodule Web.Forms.RegistrationForm do
     |> cast(attributes, @attributes)
     |> validate_email()
     |> validate_password()
-    |> to_form(as: "register")
+    |> to_form(as: "user")
   end
 
   @spec attributes(Ecto.Changeset.t()) :: {:ok, map()} | {:error, Ecto.Changeset.t()}

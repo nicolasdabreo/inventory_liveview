@@ -4,6 +4,7 @@ defmodule MRP.Accounts.Authentication.UserToken do
   use MRP, :schema
 
   alias __MODULE__, as: UserToken
+  alias MRP.Accounts.Email
 
   @hash_algorithm :sha256
   @rand_size 32
@@ -11,7 +12,7 @@ defmodule MRP.Accounts.Authentication.UserToken do
   # It is very important to keep the reset password token expiry short,
   # since someone with access to the email may take over the account.
   @reset_password_validity_in_days 1
-  @confirm_validity_in_days 7
+  @verify_validity_in_days 7
   @change_email_validity_in_days 7
   @session_validity_in_days 60
 
@@ -79,8 +80,8 @@ defmodule MRP.Accounts.Authentication.UserToken do
   Users can easily adapt the existing code to provide other types of delivery methods,
   for example, by phone numbers.
   """
-  def build_email_token(user, context) do
-    build_hashed_token(user, context, user.email)
+  def build_email_token(user, %Email{email: email}, context) do
+    build_hashed_token(user, context, email)
   end
 
   defp build_hashed_token(user, context, sent_to) do
@@ -105,7 +106,7 @@ defmodule MRP.Accounts.Authentication.UserToken do
   database and the user email has not changed. This function also checks
   if the token is being used within a certain period, depending on the
   context. The default contexts supported by this function are either
-  "confirm", for account confirmation emails, and "reset_password",
+  "verify", for account verifyation emails, and "reset_password",
   for resetting the password. For verifying requests to change the email,
   see `verify_change_email_token_query/2`.
   """
@@ -118,7 +119,7 @@ defmodule MRP.Accounts.Authentication.UserToken do
         query =
           from token in token_and_context_query(hashed_token, context),
             join: user in assoc(token, :user),
-            where: token.inserted_at > ago(^days, "day") and token.sent_to == user.email,
+            where: token.inserted_at > ago(^days, "day"),
             select: user
 
         {:ok, query}
@@ -128,7 +129,7 @@ defmodule MRP.Accounts.Authentication.UserToken do
     end
   end
 
-  defp days_for_context("confirm"), do: @confirm_validity_in_days
+  defp days_for_context("verify"), do: @verify_validity_in_days
   defp days_for_context("reset_password"), do: @reset_password_validity_in_days
 
   @doc """
