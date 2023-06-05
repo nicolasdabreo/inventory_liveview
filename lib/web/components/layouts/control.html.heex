@@ -1,0 +1,98 @@
+<div class="relative flex flex-1 w-full h-full max-w-xs mr-16">
+  <div class="flex flex-col px-6 overflow-y-auto bg-white border-r border-gray-200 grow gap-y-5">
+    <div class="relative flex items-center justify-between h-16 shrink-0">
+      <img
+        class="w-auto h-8"
+        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+        alt="Your Company"
+      />
+      
+      <.menu>
+        <:button :let={{toggle_menu, button_id}}>
+          <.button
+            id={button_id}
+            phx-click={toggle_menu.()}
+            type="button" 
+            size="sm"
+            color="white"
+          >
+            <span class="inline-block w-6 h-6 overflow-hidden bg-gray-100 rounded-full">
+              <svg class="w-full h-full text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            </span>
+          </.button>
+        </:button>
+        <:item>
+          <div class="px-4 py-3 w-52" role="none">
+            <p class="font-semibold text-gray-900 truncate">
+              Tom Cookfasdfasdfasdfasdfasasdf
+            </p>
+            <p class="truncate">asdf@asdfasdfasdfasdfasdfsa.com</p>
+          </div>
+        </:item>
+        <:item>
+          <.divider class="my-1" />
+        </:item>
+        <:item>
+          <.menu_link>View Profile</.menu_link>
+        </:item>
+        <:item>
+          <.menu_link>Settings</.menu_link>
+        </:item>
+        <:item>
+          <.divider class="my-1" />
+        </:item>
+        <:item>
+          <.menu_link>Sign out</.menu_link>
+        </:item>
+      </.menu>
+    </div>
+    <nav class="flex flex-col flex-1">
+      <ul role="list" class="flex flex-col flex-1 gap-y-7">
+        <li>
+          <ul role="list" class="-mx-2 space-y-1">
+            <li>
+              <!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
+              <a
+                href="#"
+                class="flex p-2 text-sm font-semibold leading-6 text-indigo-600 rounded-md bg-gray-50 group gap-x-3"
+              >
+                <.icon name="hero-home-solid" class="w-5 h-5 text-indigo-600" />
+                Dashboard
+                <span
+                  class="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200"
+                  aria-hidden="true"
+                >
+                  5
+                </span>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
+          <ul role="list" class="mt-2 -mx-2 space-y-1">
+            <li>
+              <!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
+              <a
+                href="#"
+                class="flex p-2 text-sm font-semibold leading-6 text-gray-700 rounded-md hover:text-indigo-600 hover:bg-gray-50 group gap-x-3"
+              >
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600">
+                  H
+                </span>
+                <span class="truncate">Heroicons</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <main class="">
+    <.flash_group flash={@flash} />
+    <%= @inner_content %> 
+  </main>
+</div>

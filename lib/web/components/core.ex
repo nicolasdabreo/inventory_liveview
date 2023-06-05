@@ -424,6 +424,28 @@ defmodule Web.Components.Core do
     """
   end
 
+  attr(:class, :string, default: "py-4")
+  attr(:rest, :global)
+
+  slot(:inner_block)
+
+  def divider(assigns) do
+    ~H"""
+    <div class={["relative", @class]} {@rest}>
+      <div class="absolute inset-0 flex items-center">
+        <div class="w-full border-t border-gray-300"></div>
+      </div>
+      <%= if @inner_block do %>
+        <div class="relative flex justify-center">
+          <span class="px-2 text-gray-500">
+            <%= render_slot(@inner_block) %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do

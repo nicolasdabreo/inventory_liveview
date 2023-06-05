@@ -27,6 +27,14 @@ defmodule Web.Router do
     end
   end
 
+  scope "/", Web.Pages do
+    pipe_through [:browser]
+
+    live_session :dashboard, on_mount: [{Authenticate, :user}, Assigns] do
+        live "/dashboard", DashboardLive, :dashboard
+    end
+  end
+
   scope "/", Web.Pages.AuthenticationLive do
     pipe_through [:browser]
 

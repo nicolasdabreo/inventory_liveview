@@ -3,10 +3,11 @@ defmodule Web.Pages.LandingLive do
 
   use Web, :live_view
 
+  alias Web.Components.Layouts
+
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :page_title, "Welcome to MRP!"),
-     layout: {Web.Components.Layouts, :empty}}
+    {:ok, assign(socket, :page_title, "Welcome to MRP!"), layout: {Layouts, :empty}}
   end
 
   @impl Phoenix.LiveView
