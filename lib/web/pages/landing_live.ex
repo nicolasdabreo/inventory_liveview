@@ -12,7 +12,7 @@ defmodule Web.Pages.LandingLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <.navbar />
+    <.navbar current_user={@current_user} />
 
     <main>
       <div class="px-4 py-20 bg-violet-50 sm:px-6 lg:px-8">
@@ -55,9 +55,16 @@ defmodule Web.Pages.LandingLive do
           </div>
 
           <div class="flex items-center gap-x-5 lg:gap-x-8">
-            <div class="hidden md:block">
-              <.nav_link navigate="/login">Sign in</.nav_link>
-            </div>
+            <%= if @current_user do %>
+              <div class="hidden md:block">
+                <.nav_link href="/logout" method="delete">Sign out</.nav_link>
+              </div>
+            <% else %>
+              <div class="hidden md:block">
+                <.nav_link navigate="/login">Sign in</.nav_link>
+              </div>
+            <% end %>
+
             <.button class="hidden md:block" navigate="/register">
               <span>
                 Get started <span class="hidden lg:inline">today</span>
@@ -75,7 +82,7 @@ defmodule Web.Pages.LandingLive do
   end
 
   attr :class, :string, default: ""
-  attr :rest, :global, default: %{}, include: ~w(href navigate patch)
+  attr :rest, :global, default: %{}, include: ~w(href navigate patch method)
 
   slot :inner_block, required: true
 

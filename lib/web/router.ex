@@ -5,12 +5,14 @@ defmodule Web.Router do
   import Web.Authenticate
 
   alias Web.Authenticate
+  alias Web.Assigns
+  alias Web.Components.Layouts
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {Web.Components.Layouts, :root}
+    plug :put_root_layout, {Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug Cldr.Plug.AcceptLanguage, cldr_backend: Web.Cldr
@@ -20,7 +22,7 @@ defmodule Web.Router do
   scope "/", Web.Pages do
     pipe_through [:browser]
 
-    live_session :marketing, on_mount: [Web.Assigns] do
+    live_session :marketing, on_mount: [Authenticate, Assigns] do
       live "/", LandingLive
     end
   end
@@ -38,9 +40,7 @@ defmodule Web.Router do
 
     pipe_through [:redirect_if_user_is_authenticated]
 
-    live_session :authentication,
-      on_mount: [Web.Assigns],
-      layout: {Web.Components.Layouts, :auth} do
+    live_session :authentication, on_mount: [Assigns], layout: {Layouts, :auth} do
       live "/login", Login, :login
       live "/register", Registration, :register
     end

@@ -9,9 +9,9 @@ defmodule MRP.Accounts.User do
   alias MRP.Accounts.Identity
 
   schema "users" do
-    has_one :primary_email, Email
-    has_one :notification_email, Email
-    has_one :public_email, Email
+    has_one :primary_email, Email, where: [tags: ["primary"]]
+    has_one :notification_email, Email, where: [tags: ["notification"]]
+    has_one :public_email, Email, where: [tags: ["public"]]
     has_many :linked_emails, Email
 
     has_one :password, Password
@@ -28,20 +28,6 @@ defmodule MRP.Accounts.User do
   could lead to unpredictable or insecure behaviour. Long passwords may
   also be very expensive to hash for certain algorithms.
 
-  ## Options
-
-    * `:hash_password` - Hashes the password so it can be stored securely
-      in the database and ensures the password field is cleared to prevent
-      leaks in the logs. If password hashing is not needed and clearing the
-      password field is not desired (like when using this changeset for
-      validations on a LiveView form), this option can be set to `false`.
-      Defaults to `true`.
-
-    * `:validate_email` - Validates the uniqueness of the email, in case
-      you don't want to validate the uniqueness of the email (like when
-      using this changeset for validations on a LiveView form before
-      submitting the form), this option can be set to `false`.
-      Defaults to `true`.
   """
   def password_registration_changeset(%User{} = user, attrs) do
     user
