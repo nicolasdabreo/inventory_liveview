@@ -30,7 +30,7 @@ defmodule Web.Pages.AuthenticationLive.Verification do
   # Do not log in the user after confirmation to avoid a
   # leaked token giving the user access to the account.
   def handle_event("confirm_account", %{"user" => %{"token" => token}}, socket) do
-    case Accounts.verify_email(token) |> IO.inspect() do
+    case Accounts.verify_email(token)  do
       {:ok, _} ->
         {:noreply,
          socket

@@ -72,15 +72,15 @@ defmodule Web.Pages.AuthenticationLive.Registration do
   end
 
   def handle_event("save", %{"user" => params}, socket) do
-    with {:ok, attributes} <- RegistrationForm.attributes(params) |> IO.inspect(),
-      {:ok, user} <- Accounts.register_user_with_password(attributes) |> IO.inspect() do
+    with {:ok, attributes} <- RegistrationForm.attributes(params) ,
+      {:ok, user} <- Accounts.register_user_with_password(attributes)  do
         {:ok, _} =
           Accounts.deliver_email_verification_instructions(
             user,
             user.primary_email,
             &url(~p"/emails/verify/#{&1}")
           )
-          |> IO.inspect()
+
 
         form = RegistrationForm.form()
         {:noreply, socket |> assign(form: form, trigger_submit: true)}
@@ -92,7 +92,7 @@ defmodule Web.Pages.AuthenticationLive.Registration do
   end
 
   def handle_event("validate", %{"user" => params}, socket) do
-    form = RegistrationForm.form(params) |> IO.inspect()
+    form = RegistrationForm.form(params)
     {:noreply, assign(socket, :form, form)}
   end
 end

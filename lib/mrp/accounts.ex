@@ -85,10 +85,10 @@ defmodule MRP.Accounts do
   marked as verified and the token is deleted.
   """
   def verify_email(token) do
-    with {:ok, query} <- UserToken.verify_email_token_query(token, "verify") |> IO.inspect(),
-         %User{} = user <- Repo.one(query) |> IO.inspect(),
-         %Email{} = email <- get_unverified_email_for_user(user) |> IO.inspect(),
-         {:ok, %{email: email}} <- Repo.transaction(verify_email_multi(user, email)) |> IO.inspect() do
+    with {:ok, query} <- UserToken.verify_email_token_query(token, "verify") ,
+         %User{} = user <- Repo.one(query) ,
+         %Email{} = email <- get_unverified_email_for_user(user) ,
+         {:ok, %{email: email}} <- Repo.transaction(verify_email_multi(user, email))  do
       {:ok, email}
     else
       _ -> :error
