@@ -2,7 +2,9 @@ defmodule MRP.Organisations.Organisation do
   use MRP, :schema
 
   schema "parties" do
-    field :name, :string, source: :surname
+    field :name, :string
+
+    belongs_to :tenant, MRP.Organisations.Tenant
 
     timestamps()
   end

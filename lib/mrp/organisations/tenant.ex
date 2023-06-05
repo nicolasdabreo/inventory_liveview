@@ -4,6 +4,9 @@ defmodule MRP.Organisations.Tenant do
   schema "tenants" do
     field :name, :string
 
+    has_many :organisations, MRP.Organisations.Organisation
+    has_many :owners, MRP.Organisations.Owner
+
     timestamps()
   end
 
