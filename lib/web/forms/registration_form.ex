@@ -24,15 +24,12 @@ defmodule Web.Forms.RegistrationForm do
     |> cast(attributes, @attributes)
     |> validate_email()
     |> validate_password()
-    |> to_form(as: "user")
   end
 
   @spec attributes(Ecto.Changeset.t()) :: {:ok, map()} | {:error, Ecto.Changeset.t()}
   def attributes(attributes \\ @defaults) do
-    %__MODULE__{}
-    |> cast(attributes, @attributes)
-    |> validate_email()
-    |> validate_password()
+    attributes
+    |> form()
     |> apply_action(:register)
     |> case do
       {:ok, struct} ->

@@ -66,7 +66,7 @@ defmodule Web.Pages.AuthenticationLive.Registration do
       |> assign(:page_title, "Create account")
       |> assign(trigger_submit: false, check_errors: false)
       |> assign(email: nil)
-      |> assign(form: form)
+      |> assign(form: to_form(form, as: "user"))
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
@@ -81,18 +81,20 @@ defmodule Web.Pages.AuthenticationLive.Registration do
             &url(~p"/emails/verify/#{&1}")
           )
 
-
         form = RegistrationForm.form()
-        {:noreply, socket |> assign(form: form, trigger_submit: true)}
+        {:noreply, socket |> assign(form: to_form(form, as: "user"), trigger_submit: true)}
       else
-        {:error, %Ecto.Changeset{}} ->
-          form = RegistrationForm.form(params)
-          {:noreply, socket |> assign(form: form, check_errors: true)}
+        {:error, changeset} ->
+          {:noreply, socket |> assign(form: to_form(changeset, as: "user"), check_errors: true)}
     end
   end
 
   def handle_event("validate", %{"user" => params}, socket) do
-    form = RegistrationForm.form(params)
-    {:noreply, assign(socket, :form, form)}
+    form = RegistrationForm.form(params) |> Map.put(:action, :validate)
+    {:noreply, assign(socket, :form, to_form(form, as: "user"))}
+  end
+
+  def handle_event(_event, _params, socket) do
+    {:noreply, socket}
   end
 end

@@ -414,7 +414,7 @@ defmodule Web.Components.Core do
     ~H"""
     <.link
       class={[
-        "block px-4 py-2 text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900 ring-inset",
+        "block px-4 py-2 text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:ring-0",
         @class
       ]}
       {@rest}

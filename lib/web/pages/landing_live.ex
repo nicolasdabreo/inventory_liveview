@@ -56,15 +56,9 @@ defmodule Web.Pages.LandingLive do
           </div>
 
           <div class="flex items-center gap-x-5 lg:gap-x-8">
-            <%= if @current_user do %>
-              <div class="hidden md:block">
-                <.nav_link href="/logout" method="delete">Sign out</.nav_link>
-              </div>
-            <% else %>
-              <div class="hidden md:block">
-                <.nav_link navigate="/login">Sign in</.nav_link>
-              </div>
-            <% end %>
+            <div class="hidden md:block">
+              <.nav_link navigate="/login">Sign in</.nav_link>
+            </div>
 
             <.button class="hidden md:block" navigate="/register">
               <span>

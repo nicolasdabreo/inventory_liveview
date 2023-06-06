@@ -61,4 +61,8 @@ defmodule Web.Pages.AuthenticationLive.Login do
     form = LoginForm.form(%{"email" => email})
     {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
+
+  def handle_event(_event, _params, socket) do
+    {:noreply, socket}
+  end
 end

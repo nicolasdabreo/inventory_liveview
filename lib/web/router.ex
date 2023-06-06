@@ -2,8 +2,6 @@
 defmodule Web.Router do
   use Web, :router
 
-  import Web.Authenticate
-
   alias Web.Authenticate
   alias Web.Assigns
   alias Web.Components.Layouts
@@ -22,7 +20,7 @@ defmodule Web.Router do
   scope "/", Web.Pages do
     pipe_through [:browser]
 
-    live_session :marketing, on_mount: [Authenticate, Assigns] do
+    live_session :marketing, on_mount: [{Authenticate, :none}, Assigns] do
       live "/", LandingLive
     end
   end
@@ -31,7 +29,7 @@ defmodule Web.Router do
     pipe_through [:browser]
 
     live_session :dashboard, on_mount: [{Authenticate, :user}, Assigns] do
-        live "/dashboard", DashboardLive, :dashboard
+      live "/dashboard", DashboardLive, :dashboard
     end
   end
 
@@ -46,9 +44,7 @@ defmodule Web.Router do
       live "/emails/verify", VerificationInstructions, :new
     end
 
-    pipe_through [:redirect_if_user_is_authenticated]
-
-    live_session :authentication, on_mount: [Assigns], layout: {Layouts, :auth} do
+    live_session :authentication, on_mount: [{Authenticate, :none}, Assigns], layout: {Layouts, :auth} do
       live "/login", Login, :login
       live "/register", Registration, :register
     end
