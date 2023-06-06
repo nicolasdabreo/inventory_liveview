@@ -1,5 +1,7 @@
 import Config
 
+alias MRP.ConfigHelpers
+
 if config_env() == :prod do
   maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
 

@@ -1,4 +1,4 @@
-defmodule ConfigHelpers do
+defmodule MRP.ConfigHelpers do
   @moduledoc """
   Provides useful abstrations for working with Configuration files and
   Environment Variables.
