@@ -1,4 +1,4 @@
-defmodule Web.Pages.DashboardLive do
+defmodule Web.ManagementPages.DashboardLive do
   use Web, :live_view
 
   alias Web.Components.Layouts
