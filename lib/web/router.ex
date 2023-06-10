@@ -25,7 +25,7 @@ defmodule Web.Router do
     end
   end
 
-  scope "/", Web.Pages do
+  scope "/", Web.ManagementPages do
     pipe_through [:browser]
 
     live_session :dashboard, on_mount: [{Authenticate, :user}, Assigns] do
