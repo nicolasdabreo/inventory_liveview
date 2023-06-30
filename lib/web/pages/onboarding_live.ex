@@ -27,14 +27,13 @@ defmodule Web.Pages.OnboardingLive do
             <:subtitle>Configure your company branding</:subtitle>
           </.header>
 
-          <%= case @live_action  do %>
+          <%= case @live_action do %>
             <% :brand -> %>
               <div class="col-span-2">
                 <.input
                   field={@form[:domain]}
                   type="text"
                   label="Subdomain"
-                  hint="We will use this for your custom portal"
                   required
                   autofocus
                 />
@@ -47,7 +46,8 @@ defmodule Web.Pages.OnboardingLive do
               <div class="col-span-3">
                 <.input field={@form[:logo]} type="file" label="Company logo" />
               </div>
-            <% :brand -> %>
+
+            <% :auth -> %>
               <div />
           <% end %>
 
@@ -71,17 +71,17 @@ defmodule Web.Pages.OnboardingLive do
     """
   end
 
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, socket, layout: {Web.Components.Layouts, :empty}}
   end
 
-  def handle_params(params, uri, socket) do
+  def handle_params(params, _uri, socket) do
     {:noreply,
      socket
      |> apply_action(socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :brand, params) do
+  defp apply_action(socket, :brand, _params) do
     form = OnboardingForm.form(:brand)
 
     socket
@@ -89,7 +89,7 @@ defmodule Web.Pages.OnboardingLive do
     |> assign(:form, form)
   end
 
-  defp apply_action(socket, :auth, params) do
+  defp apply_action(socket, :auth, _params) do
     form = OnboardingForm.form(:auth)
 
     socket
