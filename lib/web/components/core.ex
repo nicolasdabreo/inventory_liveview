@@ -21,6 +21,7 @@ defmodule Web.Components.Core do
       </.simple_form>
   """
   attr :for, :any, required: true, doc: "the datastructure for the form"
+  attr :class, :string, default: ""
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
 
   attr(:rest, :global,
@@ -34,7 +35,7 @@ defmodule Web.Components.Core do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class={["mt-10 gap-y-8 bg-white", @class]}>
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="flex items-center justify-between gap-6 mt-2">
           <%= render_slot(action, f) %>
