@@ -17,13 +17,7 @@ defmodule Web.Pages.AuthenticationLive.Login do
         phx-update="ignore"
         method="post"
       >
-        <.input
-          field={@form[:email]}
-          type="email"
-          label="Email"
-          required
-          autofocus
-        />
+        <.input field={@form[:email]} type="email" label="Email" required autofocus />
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <div class="mt-10 text-sm text-center">
@@ -45,10 +39,7 @@ defmodule Web.Pages.AuthenticationLive.Login do
 
       <div class="mt-10 text-sm text-center">
         Not a customer yet?
-        <.link
-          navigate={~p"/register"}
-          class="font-semibold text-violet-500 hover:underline"
-        >
+        <.link navigate={~p"/register"} class="font-semibold text-violet-500 hover:underline">
           Sign up
         </.link>
       </div>

@@ -33,8 +33,8 @@ defmodule Web.Forms.RegistrationForm do
     |> apply_action(:register)
     |> case do
       {:ok, struct} ->
-       attributes =
-         struct
+        attributes =
+          struct
           |> Map.from_struct()
           |> prepare_attributes()
 
@@ -56,6 +56,7 @@ defmodule Web.Forms.RegistrationForm do
     changeset
     |> validate_required([:password])
     |> validate_length(:password, min: 12, max: 72)
+
     # |> validate_confirmation(:password, message: "does not match password")
   end
 

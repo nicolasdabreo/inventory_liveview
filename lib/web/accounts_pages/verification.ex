@@ -11,7 +11,9 @@ defmodule Web.Pages.AuthenticationLive.Verification do
       <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
         <.input field={@form[:token]} type="hidden" />
         <:actions>
-          <.button type="submit" phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
+          <.button type="submit" phx-disable-with="Confirming..." class="w-full">
+            Confirm my account
+          </.button>
         </:actions>
       </.simple_form>
 
@@ -30,7 +32,7 @@ defmodule Web.Pages.AuthenticationLive.Verification do
   # Do not log in the user after confirmation to avoid a
   # leaked token giving the user access to the account.
   def handle_event("confirm_account", %{"user" => %{"token" => token}}, socket) do
-    case Accounts.verify_email(token)  do
+    case Accounts.verify_email(token) do
       {:ok, _} ->
         {:noreply,
          socket

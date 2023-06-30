@@ -15,7 +15,6 @@ defmodule Web.Pages.OnboardingLive do
     <.container class="max-w-xl mt-20">
       <div>Step 1 / 2</div>
       <div class="grid grid-cols-1">
-
         <.simple_form
           for={@form}
           id={"onboarding_form_#{@live_action}"}
@@ -48,7 +47,6 @@ defmodule Web.Pages.OnboardingLive do
               <div class="col-span-3">
                 <.input field={@form[:logo]} type="file" label="Company logo" />
               </div>
-
             <% :brand -> %>
               <div />
           <% end %>
@@ -63,7 +61,9 @@ defmodule Web.Pages.OnboardingLive do
             </.button>
           </:actions>
           <:actions>
-            <.link class="flex items-center text-sm font-normal text-gray-500">Skip <span class="ml-2" aria-hidden="true">→</span></.link>
+            <.link class="flex items-center text-sm font-normal text-gray-500">
+              Skip <span class="ml-2" aria-hidden="true">→</span>
+            </.link>
           </:actions>
         </.simple_form>
       </div>
@@ -97,11 +97,11 @@ defmodule Web.Pages.OnboardingLive do
     |> assign(:form, form)
   end
 
-  def handle_event("validate", %{"onboarding" => params}, socket ) do
+  def handle_event("validate", %{"onboarding" => params}, socket) do
     form = OnboardingForm.form(socket.assigns.live_action, params)
 
     {:noreply,
-      socket
-      |> assign(:form, form)}
+     socket
+     |> assign(:form, form)}
   end
 end

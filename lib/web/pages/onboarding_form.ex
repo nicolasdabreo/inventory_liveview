@@ -13,6 +13,7 @@ defmodule Web.Pages.OnboardingForm do
 
   @spec form(:atom, map()) :: Ecto.Changeset.t()
   def form(_step, attributes \\ @defaults)
+
   def form(:brand, attributes) do
     %__MODULE__{}
     |> cast(attributes, @attributes)

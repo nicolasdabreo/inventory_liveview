@@ -28,8 +28,8 @@ defmodule Web.Pages.AuthenticationLive.VerificationInstructions do
 
   def handle_event("send_instructions", %{"user" => %{"email" => given_email}}, socket) do
     with %User{} = user <- Accounts.get_user_by_email(given_email),
-        %Email{} = email <- Accounts.get_unverified_email_for_user(user),
-        true <- email.email == given_email do
+         %Email{} = email <- Accounts.get_unverified_email_for_user(user),
+         true <- email.email == given_email do
       Accounts.deliver_email_verification_instructions(
         user,
         email,

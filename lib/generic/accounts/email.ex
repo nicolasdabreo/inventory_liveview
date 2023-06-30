@@ -61,5 +61,5 @@ defmodule MRP.Accounts.Email do
     |> unique_constraint(:email)
   end
 
-  defp sort_array(changeset, field), do: update_change(changeset, field, &(Enum.sort(&1)))
+  defp sort_array(changeset, field), do: update_change(changeset, field, &Enum.sort(&1))
 end

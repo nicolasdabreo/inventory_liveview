@@ -27,13 +27,7 @@ defmodule Web.Pages.AuthenticationLive.Registration do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <.input
-          field={@form[:email]}
-          type="email"
-          label="Email"
-          required
-          autofocus
-        />
+        <.input field={@form[:email]} type="email" label="Email" required autofocus />
 
         <.input field={@form[:password]} type="password" label="Password" required />
 
@@ -72,20 +66,20 @@ defmodule Web.Pages.AuthenticationLive.Registration do
   end
 
   def handle_event("save", %{"user" => params}, socket) do
-    with {:ok, attributes} <- RegistrationForm.attributes(params) ,
-      {:ok, user} <- Accounts.register_user_with_password(attributes)  do
-        {:ok, _} =
-          Accounts.deliver_email_verification_instructions(
-            user,
-            user.primary_email,
-            &url(~p"/emails/verify/#{&1}")
-          )
+    with {:ok, attributes} <- RegistrationForm.attributes(params),
+         {:ok, user} <- Accounts.register_user_with_password(attributes) do
+      {:ok, _} =
+        Accounts.deliver_email_verification_instructions(
+          user,
+          user.primary_email,
+          &url(~p"/emails/verify/#{&1}")
+        )
 
-        form = RegistrationForm.form()
-        {:noreply, socket |> assign(form: to_form(form, as: "user"), trigger_submit: true)}
-      else
-        {:error, changeset} ->
-          {:noreply, socket |> assign(form: to_form(changeset, as: "user"), check_errors: true)}
+      form = RegistrationForm.form()
+      {:noreply, socket |> assign(form: to_form(form, as: "user"), trigger_submit: true)}
+    else
+      {:error, changeset} ->
+        {:noreply, socket |> assign(form: to_form(changeset, as: "user"), check_errors: true)}
     end
   end
 

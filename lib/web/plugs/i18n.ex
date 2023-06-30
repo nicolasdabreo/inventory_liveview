@@ -16,7 +16,7 @@ defmodule Web.Plugs.I18n do
   def init(param), do: param
 
   def call(%Plug.Conn{req_cookies: %{@cookie => locale}} = conn, _opts)
-    when locale in @locales do
+      when locale in @locales do
     set_locale(conn, locale)
   end
 

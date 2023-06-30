@@ -25,13 +25,14 @@ defmodule Web.Pages.AuthenticationLive.SessionController do
 
   defp create(conn, %{"user" => user_params}, info) do
     email = user_params["email"]
+
     with {:ok, %{email: email, password: password}} <- LoginForm.attributes(user_params),
-      %User{} = user <- Accounts.get_user_by_email_and_password(email, password) do
-        conn
-        |> put_flash(:info, info)
-        |> Authenticate.log_in_user(user, user_params)
-      else
-        _ ->
+         %User{} = user <- Accounts.get_user_by_email_and_password(email, password) do
+      conn
+      |> put_flash(:info, info)
+      |> Authenticate.log_in_user(user, user_params)
+    else
+      _ ->
         conn
         |> put_flash(:error, "Invalid email or password")
         |> put_flash(:email, String.slice(email, 0, 160))

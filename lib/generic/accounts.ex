@@ -13,10 +13,10 @@ defmodule MRP.Accounts do
   def get_unverified_email_for_user(%User{} = user) do
     query =
       from(e in Email,
-      join: u in assoc(e, :user),
-      where: is_nil(e.verified_at),
-      where: u.id == ^user.id)
-
+        join: u in assoc(e, :user),
+        where: is_nil(e.verified_at),
+        where: u.id == ^user.id
+      )
 
     Repo.one(query)
   end
@@ -24,11 +24,11 @@ defmodule MRP.Accounts do
   def get_user_by_primary_email(email) when is_binary(email) do
     query =
       from u in User,
-      join: e in Email,
-      on: u.id == e.user_id,
-      where: e.email == ^email,
-      where: "primary" in e.tags,
-      preload: [:primary_email, :password]
+        join: e in Email,
+        on: u.id == e.user_id,
+        where: e.email == ^email,
+        where: "primary" in e.tags,
+        preload: [:primary_email, :password]
 
     Repo.one(query)
   end
@@ -36,9 +36,9 @@ defmodule MRP.Accounts do
   def get_user_by_email(email) when is_binary(email) do
     query =
       from u in User,
-      join: e in Email,
-      on: u.id == e.user_id,
-      where: e.email == ^email
+        join: e in Email,
+        on: u.id == e.user_id,
+        where: e.email == ^email
 
     Repo.one(query)
   end
@@ -65,8 +65,12 @@ defmodule MRP.Accounts do
   @doc ~S"""
   Delivers the verification email instructions to the given user.
   """
-  def deliver_email_verification_instructions(user, %Email{verified_at: nil} = email, verification_url_fun)
-    when is_function(verification_url_fun, 1) do
+  def deliver_email_verification_instructions(
+        user,
+        %Email{verified_at: nil} = email,
+        verification_url_fun
+      )
+      when is_function(verification_url_fun, 1) do
     {encoded_token, user_token} = UserToken.build_email_token(user, email, "verify")
     Repo.insert!(user_token)
 
@@ -76,7 +80,11 @@ defmodule MRP.Accounts do
     })
   end
 
-  def deliver_email_verification_instructions(_user, %Email{verified_at: _not_nil}, _verification_url_fun) do
+  def deliver_email_verification_instructions(
+        _user,
+        %Email{verified_at: _not_nil},
+        _verification_url_fun
+      ) do
     {:error, :already_verified}
   end
 
@@ -85,10 +93,10 @@ defmodule MRP.Accounts do
   marked as verified and the token is deleted.
   """
   def verify_email(token) do
-    with {:ok, query} <- UserToken.verify_email_token_query(token, "verify") ,
-         %User{} = user <- Repo.one(query) ,
-         %Email{} = email <- get_unverified_email_for_user(user) ,
-         {:ok, %{email: email}} <- Repo.transaction(verify_email_multi(user, email))  do
+    with {:ok, query} <- UserToken.verify_email_token_query(token, "verify"),
+         %User{} = user <- Repo.one(query),
+         %Email{} = email <- get_unverified_email_for_user(user),
+         {:ok, %{email: email}} <- Repo.transaction(verify_email_multi(user, email)) do
       {:ok, email}
     else
       _ -> :error
