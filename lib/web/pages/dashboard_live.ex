@@ -1,17 +1,17 @@
-defmodule Web.ManagementPages.DashboardLive do
+defmodule Web.Pages.DashboardLive do
   use Web, :live_view
 
   alias Web.Components.Layouts
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :page_title, "Dashboard"), layout: {Layouts, :control}}
+    {:ok, assign(socket, :page_title, "Dashboard")}
   end
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-
+    Dashboard
     """
   end
 end

@@ -25,11 +25,15 @@ defmodule Web.Router do
     end
   end
 
-  scope "/", Web.ManagementPages do
+  scope "/", Web.Pages do
     pipe_through [:browser]
 
-    live_session :dashboard, on_mount: [{Authenticate, :user}, Assigns] do
+    live_session :dashboard,
+      on_mount: [{Authenticate, :user}, Assigns],
+      layout: {Layouts, :control} do
       live "/dashboard", DashboardLive, :dashboard
+      live "/onboarding/brand", OnboardingLive, :brand
+      live "/onboarding/auth", OnboardingLive, :auth
     end
   end
 
@@ -39,19 +43,18 @@ defmodule Web.Router do
     delete "/logout", SessionController, :delete
     post "/login", SessionController, :create
 
-    live_session :verification, on_mount: [Authenticate] do
+    live_session :verification,
+      on_mount: [Authenticate] do
       live "/emails/verify/:token", Verification, :edit
       live "/emails/verify", VerificationInstructions, :new
     end
 
-    live_session :authentication, on_mount: [{Authenticate, :none}, Assigns], layout: {Layouts, :auth} do
+    live_session :authentication,
+      on_mount: [{Authenticate, :none}, Assigns],
+      layout: {Layouts, :auth} do
       live "/login", Login, :login
       live "/register", Registration, :register
     end
-  end
-
-  scope "/", Web.TenantPages do
-    pipe_through [:browser]
   end
 
   # Redirects
