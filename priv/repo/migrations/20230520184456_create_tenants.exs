@@ -4,10 +4,13 @@ defmodule MRP.Repo.Migrations.CreateTenants do
   def change do
     create table(:tenants, primary_key: false) do
       add :id, :uuid, primary_key: true
-      add :name, :string, null: false
+      add :subdomain, :string, null: false
+      add :brand_color, :string
+      add :logo, :string
+
       timestamps()
     end
 
-    create unique_index(:tenants, [:name])
+    create unique_index(:tenants, [:subdomain])
   end
 end
