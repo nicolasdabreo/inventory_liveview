@@ -1,5 +1,5 @@
 defmodule MRP.Accounts do
-  use MRP, :context
+  use MRP, :domain
 
   alias MRP.Accounts.User
   alias MRP.Accounts.Email

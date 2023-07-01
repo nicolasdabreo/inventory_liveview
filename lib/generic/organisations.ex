@@ -1,5 +1,5 @@
 defmodule MRP.Organisations do
-  use MRP, :context
+  use MRP, :domain
 
   alias MRP.Organisations.Organisation
 

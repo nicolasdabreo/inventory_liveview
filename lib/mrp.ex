@@ -22,7 +22,7 @@ defmodule MRP do
     end
   end
 
-  def context do
+  def domain do
     quote do
       import Ecto.Query, warn: false
 
