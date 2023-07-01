@@ -1,6 +1,7 @@
 defmodule Core.Inventory do
   use MRP, :domain
 
+  alias __MODULE__, as: Inventory
   alias __MODULE__.Events
 
   ## Changesets

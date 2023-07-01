@@ -30,13 +30,7 @@ defmodule Web.Pages.OnboardingLive do
           <%= case @live_action do %>
             <% :brand -> %>
               <div class="col-span-2">
-                <.input
-                  field={@form[:domain]}
-                  type="text"
-                  label="Subdomain"
-                  required
-                  autofocus
-                />
+                <.input field={@form[:domain]} type="text" label="Subdomain" required autofocus />
               </div>
 
               <div class="col-span-1">
@@ -46,7 +40,6 @@ defmodule Web.Pages.OnboardingLive do
               <div class="col-span-3">
                 <.input field={@form[:logo]} type="file" label="Company logo" />
               </div>
-
             <% :auth -> %>
               <div />
           <% end %>

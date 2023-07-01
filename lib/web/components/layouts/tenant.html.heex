@@ -3,12 +3,22 @@
     <div class="px-4 mx-auto">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-6">
-          <.button icon color={nil} size={nil} class="px-1 py-1" phx_click={show_slideover(%JS{}, "slideover-left")}>
+          <.button
+            icon
+            color={nil}
+            size={nil}
+            class="px-1 py-1"
+            phx_click={show_slideover(%JS{}, "slideover-left")}
+          >
             <span class="sr-only">Open navigation menu</span>
             <.icon name="hero-bars-3-solid" />
           </.button>
           <div class="flex-shrink-0">
-            <img class="w-8 h-8" src="https://tailwindui.com/img/logos/mark.svg?color=white" alt="Your Company">
+            <img
+              class="w-8 h-8"
+              src="https://tailwindui.com/img/logos/mark.svg?color=white"
+              alt="Your Company"
+            />
           </div>
           <div class="hidden md:block">
             <div class="flex items-baseline space-x-4">
@@ -24,13 +34,30 @@
             <label for="search" class="sr-only">Search</label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg class="w-5 h-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                <svg
+                  class="w-5 h-5 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
-              <input id="search" name="search" class="block w-full py-1 pl-10 pr-3 text-gray-300 bg-transparent border border-gray-400 rounded-md placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Search" type="search">
+              <input
+                id="search"
+                name="search"
+                class="block w-full py-1 pl-10 pr-3 text-gray-300 bg-transparent border border-gray-400 rounded-md placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                placeholder="Search"
+                type="search"
+              />
               <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                <kbd class="inline-flex items-center px-1 font-sans text-xs text-gray-400 border border-gray-400 rounded">⌘K</kbd>
+                <kbd class="inline-flex items-center px-1 font-sans text-xs text-gray-400 border border-gray-400 rounded">
+                  ⌘K
+                </kbd>
               </div>
             </div>
           </div>
@@ -45,7 +72,13 @@
             <.icon name="hero-inbox-solid" />
           </.button>
 
-          <.button icon color={nil} size={nil} class="px-1 py-1" phx_click={show_slideover(%JS{}, "slideover-right")}>
+          <.button
+            icon
+            color={nil}
+            size={nil}
+            class="px-1 py-1"
+            phx_click={show_slideover(%JS{}, "slideover-right")}
+          >
             <.icon name="hero-user-solid" />
           </.button>
         </div>
@@ -62,7 +95,7 @@
       </.tabs>
     </div>
   </header>
-  
+
   <main>
     <.flash_group flash={@flash} />
     <%= @inner_content %>
@@ -70,13 +103,11 @@
 
   <.slideover id="slideover-left" direction="left">
     <:slideover_header></:slideover_header>
-    <:slideover_content>
-    </:slideover_content>
+    <:slideover_content></:slideover_content>
   </.slideover>
 
   <.slideover id="slideover-right" direction="right">
     <:slideover_header></:slideover_header>
-    <:slideover_content>
-    </:slideover_content>
+    <:slideover_content></:slideover_content>
   </.slideover>
 </div>

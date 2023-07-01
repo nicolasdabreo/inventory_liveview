@@ -142,7 +142,8 @@ defmodule Web.Components.Core do
     do:
       "bg-white text-slate-900 hover:bg-blue-50 active:bg-blue-200 active:text-slate-600 border border-slate-300"
 
-  defp button_color_classes(_size), do: "text-zinc-400 hover:text-zinc-300 border border-zinc-400 hover:border-zinc-300"
+  defp button_color_classes(_size),
+    do: "text-zinc-400 hover:text-zinc-300 border border-zinc-400 hover:border-zinc-300"
 
   @doc """
   Renders a header with title.
@@ -401,7 +402,7 @@ defmodule Web.Components.Core do
         >
           <.focus_wrap id={@id <> "-focus"}>
             <ul :if={not Enum.empty?(@item)} role="list" {@rest}>
-              <li :for={item <- @item} class="flex flex-col items-center" role={item[:role] || "listitem"}>
+              <li :for={item <- @item} class="flex flex-col" role={item[:role] || "listitem"}>
                 <%= render_slot(item) %>
               </li>
             </ul>
@@ -473,8 +474,15 @@ defmodule Web.Components.Core do
     <nav class={@class} aria-label="Tabs">
       <div class="sm:hidden">
         <label for={"#{@id}-mobile"} class="sr-only">Select a tab</label>
-        <select id={"#{@id}-mobile"} name={"#{@id}-mobile"} phx-change={JS.dispatch("js:tab-selected", detail: %{id: "#{@id}-mobile"})} class="block w-full py-2 pl-3 pr-10 text-base rounded-md border-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-          <option :for={{tab, i} <- Enum.with_index(@tab)} value={"#{@id}-#{i}"}><%= render_slot(tab) %></option>
+        <select
+          id={"#{@id}-mobile"}
+          name={"#{@id}-mobile"}
+          phx-change={JS.dispatch("js:tab-selected", detail: %{id: "#{@id}-mobile"})}
+          class="block w-full py-2 pl-3 pr-10 text-base rounded-md border-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+        >
+          <option :for={{tab, i} <- Enum.with_index(@tab)} value={"#{@id}-#{i}"}>
+            <%= render_slot(tab) %>
+          </option>
         </select>
       </div>
       <div class="hidden sm:block">
@@ -492,7 +500,7 @@ defmodule Web.Components.Core do
             {assigns_to_attributes(tab, [:selected, :disabled])}
           >
             <%= render_slot(tab) %>
-            <.badge class="ml-2" :if={tab[:badge]}>
+            <.badge :if={tab[:badge]} class="ml-2">
               <%= tab.badge %>
             </.badge>
           </.link>
@@ -598,6 +606,8 @@ defmodule Web.Components.Core do
   attr :class, :string, default: nil
   attr :rest, :global
 
+  slot :inner_block
+
   def badge(assigns) do
     ~H"""
     <span
@@ -641,7 +651,11 @@ defmodule Web.Components.Core do
       aria-hidden="true"
       phx-remove={hide_slideover(@id)}
       data-cancel={JS.exec("phx-remove")}
-      class={["hidden fixed inset-y-0 z-20 flex max-w-full transition-transform", @direction == "right" && "right-0", @direction == "left" && "left-0"]}
+      class={[
+        "hidden fixed inset-y-0 z-20 flex max-w-full transition-transform",
+        @direction == "right" && "right-0",
+        @direction == "left" && "left-0"
+      ]}
     >
       <.focus_wrap
         id={"#{@id}-container"}
@@ -651,14 +665,24 @@ defmodule Web.Components.Core do
         class="h-full"
       >
         <div class="w-screen h-full max-w-xs">
-          <div class={["flex flex-col h-full py-2.5 overflow-y-auto shadow-xl border-zinc-300 px-8 bg-zinc-900", @direction == "right" && "rounded-l-xl", @direction == "left" && "rounded-r-xl"]}>
+          <div class={[
+            "flex flex-col h-full py-2.5 overflow-y-auto shadow-xl border-zinc-300 px-8 bg-zinc-900",
+            @direction == "right" && "rounded-l-xl",
+            @direction == "left" && "rounded-r-xl"
+          ]}>
             <div class="flex items-start justify-between pt-2 pb-4">
               <h2 class="text-lg uppercase text-zinc-900 font-base">
                 <%= render_slot(@aside_header) %>
               </h2>
 
               <div class="flex items-center h-7">
-                <.button type="button" phx-click={hide_slideover(@id)} color={nil} size={nil} class="p-1 mr-[-16px]">
+                <.button
+                  type="button"
+                  phx-click={hide_slideover(@id)}
+                  color={nil}
+                  size={nil}
+                  class="p-1 mr-[-16px]"
+                >
                   <span class="sr-only">
                     Close panel
                   </span>
@@ -676,7 +700,6 @@ defmodule Web.Components.Core do
         </div>
       </.focus_wrap>
     </div>
-
     """
   end
 
@@ -734,9 +757,6 @@ defmodule Web.Components.Core do
     |> JS.remove_class("text-violet-500", to: "##{id}-button.text-violet-500")
     |> JS.add_class("text-violet-500", to: "##{id}-button:not(.text-violet-500)")
   end
-
-  @slideover_enter_transition {"duration-500", "translate-x-full", "translate-x-0"}
-  @slideover_leave_transition {"duration-500", "translate-x-0", "translate-x-full"}
 
   def show_slideover(js \\ %JS{}, id) do
     js

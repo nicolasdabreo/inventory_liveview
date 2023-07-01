@@ -3,8 +3,6 @@ defmodule Web.Components.Data do
 
   use Phoenix.Component
 
-  import Web.Gettext
-
   attr(:id, :string, required: true)
   attr(:rows, :list, default: [])
   attr(:selected_rows, :list, default: nil)
@@ -13,6 +11,7 @@ defmodule Web.Components.Data do
 
   attr(:row_id, :any, default: nil, doc: "the function for generating the row id")
   attr(:row_click, :any, default: nil, doc: "the function for handling phx-click on each row")
+
   attr(:group_click, :any, default: nil, doc: "the function for handling phx-click on a row group")
 
   attr(:row_item, :any,
@@ -39,62 +38,66 @@ defmodule Web.Components.Data do
 
     ~H"""
     <div id={@id} class={["overflow-x-auto", @class]}>
-    <table class="w-full text-left whitespace-nowrap">
+      <table class="w-full text-left whitespace-nowrap">
+        <colgroup>
+          <col class="w-1" />
+          <col class="lg:w-4/12" />
+          <col class="lg:w-2/12" />
+          <col class="lg:w-2/12" />
+          <col class="lg:w-2/12" />
+        </colgroup>
 
-    <colgroup>
-      <col class="w-1">
-      <col class="lg:w-4/12">
-      <col class="lg:w-2/12">
-      <col class="lg:w-2/12">
-      <col class="lg:w-2/12">
-    </colgroup>
+        <thead class="text-sm leading-6 text-white border-b border-white/10">
+          <tr>
+            <th :if={@selected_rows} />
+            <th :for={col <- @col} class="py-2 font-semibold truncate">
+              <%= col[:label] %>
+            </th>
+            <th class="relative p-0 pb-4"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
 
-    <thead class="text-sm leading-6 text-white border-b border-white/10">
-      <tr>
-        <th :if={@selected_rows} />
-        <th :for={col <- @col} class="py-2 font-semibold truncate">
-          <%= col[:label] %>
-        </th>
-        <th class="relative p-0 pb-4"><span class="sr-only">Actions</span></th>
-      </tr>
-    </thead>
+        <.tbody
+          :let={rows}
+          id={@id}
+          rows={@rows}
+          col={@col}
+          action={@action}
+          selected_rows={@selected_rows}
+          group_click={@group_click}
+        >
+          <.table_row
+            :for={{row, i} <- Enum.with_index(rows)}
+            index={i}
+            row={row}
+            row_click={@row_click}
+            id={@id}
+            col={@col}
+            selected_rows={@selected_rows}
+            action={@action}
+          />
+        </.tbody>
 
-    <.tbody
-      :let={rows}
-      id={@id}
-      rows={@rows}
-      col={@col}
-      action={@action}
-      selected_rows={@selected_rows}
-      group_click={@group_click}
-    >
-      <.table_row
-        :for={{row, i} <- Enum.with_index(rows)}
-        index={i}
-        row={row}
-        row_click={@row_click}
-        id={@id}
-        col={@col}
-        selected_rows={@selected_rows}
-        action={@action}
-      />
-    </.tbody>
-
-    <tbody :if={Enum.empty?(@rows)} class="leading-6 border-b border-white/10">
-      <tr>
-        <td class="w-full p-8 mx-auto text-center" colspan={length(@col) + 1}>
-          <%= render_slot(@empty) %>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
-  """
+        <tbody :if={Enum.empty?(@rows)} class="leading-6 border-b border-white/10">
+          <tr>
+            <td class="w-full p-8 mx-auto text-center" colspan={length(@col) + 1}>
+              <%= render_slot(@empty) %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    """
   end
 
   defp tbody(%{rows: row_group} = assigns) when is_map(row_group) do
     ~H"""
-    <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} :for={{group, rows} <- @rows} class="divide-y divide-white/5">
+    <tbody
+      :for={{group, rows} <- @rows}
+      id={@id}
+      phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+      class="divide-y divide-white/5"
+    >
       <tr id={"#{@id}-group-#{group}"}>
         <td
           :if={@selected_rows}
@@ -126,7 +129,11 @@ defmodule Web.Components.Data do
 
   defp tbody(%{rows: rows} = assigns) when is_list(rows) do
     ~H"""
-    <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="divide-y divide-white/5">
+    <tbody
+      id={@id}
+      phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+      class="divide-y divide-white/5"
+    >
       <%= render_slot(@inner_block, @rows) %>
     </tbody>
     """
