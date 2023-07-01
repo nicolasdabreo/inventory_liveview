@@ -3,11 +3,3 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
-
-a {
-  @apply border border-transparent rounded focus-within:outline-none focus-within:ring-4 focus:ring-4 focus:outline-none focus:ring-violet-200;
-}
-
-button {
-  @apply focus-within:outline-none focus-within:ring-4 focus:ring-4 focus:outline-none focus:ring-violet-300;
-}

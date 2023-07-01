@@ -67,6 +67,7 @@ defmodule Web.Components.Core do
   )
 
   attr :class, :string, default: nil
+  attr :icon, :boolean, default: false
   attr :rest, :global
 
   slot(:inner_block, required: true)
@@ -75,7 +76,7 @@ defmodule Web.Components.Core do
     ~H"""
     <button
       class={[
-        button_base_classes(),
+        button_base_classes(@icon),
         button_size_classes(@size),
         button_color_classes(@color),
         @class
@@ -99,7 +100,7 @@ defmodule Web.Components.Core do
       navigate={@navigate}
       href={@href}
       class={[
-        button_base_classes(),
+        button_base_classes(@icon),
         button_size_classes(@size),
         button_color_classes(@color),
         @class
@@ -112,8 +113,12 @@ defmodule Web.Components.Core do
     """
   end
 
-  defp button_base_classes do
-    "inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-gray-400 disabled:bg-gray-200 disabled:hover:bg-gray-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75"
+  defp button_base_classes(false) do
+    "inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-zinc-400 disabled:bg-zinc-200 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75 focus-within:outline-none focus-within:ring-2 focus:ring-2 focus:outline-none focus:ring-violet-300"
+  end
+
+  defp button_base_classes(true) do
+    "inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-zinc-400 disabled:bg-zinc-200 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75 focus-within:outline-none focus-within:ring-2 focus:ring-2 focus:outline-none focus:ring-violet-300"
   end
 
   defp button_size_classes("sm"), do: "h-8 px-3 py-2 text-sm"
@@ -129,7 +134,7 @@ defmodule Web.Components.Core do
     do:
       "bg-blue-600 text-white hover:text-slate-100 hover:bg-blue-500 active:bg-blue-800 active:text-blue-100"
 
-  defp button_color_classes("gray"),
+  defp button_color_classes("zinc"),
     do:
       "bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300"
 
@@ -137,7 +142,7 @@ defmodule Web.Components.Core do
     do:
       "bg-white text-slate-900 hover:bg-blue-50 active:bg-blue-200 active:text-slate-600 border border-slate-300"
 
-  defp button_color_classes(_size), do: ""
+  defp button_color_classes(_size), do: "text-zinc-400 hover:text-zinc-300 border border-zinc-400 hover:border-zinc-300"
 
   @doc """
   Renders a header with title.
@@ -177,10 +182,10 @@ defmodule Web.Components.Core do
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
+    <div class="">
       <.link
         navigate={@navigate}
-        class={["text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700", @class]}
+        class={["text-sm font-semibold leading-6 text-white hover:text-zinc-700", @class]}
       >
         <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
         <%= render_slot(@inner_block) %>
@@ -383,10 +388,10 @@ defmodule Web.Components.Core do
         <div
           id={@id}
           class={[
-            "z-50 absolute mt-2 w-full hidden
+            "z-50 absolute mt-2 w-full hidden border border-zinc-700
               left-auto bottom-auto right-0 origin-top-right transform inset-x-0
-              scale-100 bg-white rounded-lg shadow-lg opacity-100 ring-1 min-w-max
-              ring-black ring-opacity-5 focus:outline-none p-0 overflow-y-auto",
+              scale-100 bg-zinc-800 rounded-lg shadow-lg opacity-100 ring-1 min-w-max
+              ring-black ring-opacity-5 focus:outline-none overflow-y-auto p-2",
             @class
           ]}
           role="menu"
@@ -396,7 +401,7 @@ defmodule Web.Components.Core do
         >
           <.focus_wrap id={@id <> "-focus"}>
             <ul :if={not Enum.empty?(@item)} role="list" {@rest}>
-              <li :for={item <- @item} class="flex flex-col" role={item[:role] || "listitem"}>
+              <li :for={item <- @item} class="flex flex-col items-center" role={item[:role] || "listitem"}>
                 <%= render_slot(item) %>
               </li>
             </ul>
@@ -415,7 +420,7 @@ defmodule Web.Components.Core do
     ~H"""
     <.link
       class={[
-        "block px-4 py-2 text-gray-700 no-underline hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:ring-0",
+        "block text-sm px-4 py-2 text-zinc-300 no-underline hover:bg-zinc-700 hover:text-zinc-200 focus:bg-zinc-700 focus:text-zinc-200 focus:ring-0 rounded-lg",
         @class
       ]}
       {@rest}
@@ -434,16 +439,244 @@ defmodule Web.Components.Core do
     ~H"""
     <div class={["relative", @class]} {@rest}>
       <div class="absolute inset-0 flex items-center">
-        <div class="w-full border-t border-gray-300"></div>
+        <div class="w-full border-t border-zinc-300"></div>
       </div>
       <%= if @inner_block do %>
         <div class="relative flex justify-center">
-          <span class="px-2 text-gray-500">
+          <span class="px-2 text-zinc-500">
             <%= render_slot(@inner_block) %>
           </span>
         </div>
       <% end %>
     </div>
+    """
+  end
+
+  @doc """
+  Tabs
+  """
+
+  attr :id, :string, required: true
+  attr :type, :string, default: "button", values: ~w(button submit reset)
+  attr :full, :boolean, default: false, doc: "forces the width to full"
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled)
+
+  slot :tab, required: true do
+    attr :disabled, :boolean
+    attr :error, :boolean
+    attr :selected, :boolean, doc: "activates the selected state"
+  end
+
+  def tabs(assigns) do
+    ~H"""
+    <nav class={@class} aria-label="Tabs">
+      <div class="sm:hidden">
+        <label for={"#{@id}-mobile"} class="sr-only">Select a tab</label>
+        <select id={"#{@id}-mobile"} name={"#{@id}-mobile"} phx-change={JS.dispatch("js:tab-selected", detail: %{id: "#{@id}-mobile"})} class="block w-full py-2 pl-3 pr-10 text-base rounded-md border-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+          <option :for={{tab, i} <- Enum.with_index(@tab)} value={"#{@id}-#{i}"}><%= render_slot(tab) %></option>
+        </select>
+      </div>
+      <div class="hidden sm:block">
+        <div class="flex space-x-8 overflow-x-auto snap-mandatory overscroll-x-contain scroll-px-6 lg:overflow-x-hidden">
+          <.link
+            :for={{tab, i} <- Enum.with_index(@tab)}
+            id={"#{@id}-#{i}"}
+            aria-current={tab[:selected] && "page"}
+            phx-mounted={tab[:selected] && JS.dispatch("phx:scroll-into-view")}
+            class={[
+              "snap-start no-underline px-1 py-4 font-medium border-b-2 whitespace-nowrap",
+              state_classes(tab),
+              @full && "w-1/4 text-center"
+            ]}
+            {assigns_to_attributes(tab, [:selected, :disabled])}
+          >
+            <%= render_slot(tab) %>
+            <.badge class="ml-2" :if={tab[:badge]}>
+              <%= tab.badge %>
+            </.badge>
+          </.link>
+        </div>
+      </div>
+    </nav>
+    """
+  end
+
+  defp state_classes(%{selected: true, error: true}) do
+    "text-danger border-danger hover:text-danger-dark"
+  end
+
+  defp state_classes(%{selected: false, error: true}) do
+    "text-danger border-transparent hover:text-danger-dark hover:border-danger"
+  end
+
+  defp state_classes(%{selected: true}) do
+    "text-white border-white"
+  end
+
+  defp state_classes(%{disabled: true}) do
+    "text-zinc-400 border-transparent cursor-not-allowed hover:border-transparent hover:text-zinc-400"
+  end
+
+  defp state_classes(_) do
+    "text-zinc-500 border-transparent hover:text-zinc-400 hover:border-zinc-300"
+  end
+
+  @doc """
+  Breadcrumb navigation component separated by auto-generated right chevrons.
+
+  Raises an `ArgumentError` when no link slots are added to the
+  breadcrumb.
+
+  Assigns passed into the link slot are all bubbled down to
+  `Phoenix.Component.link/1`.
+
+  ## Examples
+
+      <Components.breadcrumbs class="p-1">
+        <:link patch={Routes.index_path(Endpoint, :index)}><%= gettext "Foo" %></:link>
+        <:link><%= gettext "Foo" %></:link>
+      </Components.breadcrumbs>
+
+  """
+
+  attr(:rest, :global, default: %{})
+
+  slot(:link, required: true)
+
+  def breadcrumbs(assigns) do
+    assigns =
+      assigns
+      |> assign(:first, 0)
+      |> assign(:last, length(assigns.link) - 1)
+      |> assign(:penultimate, length(assigns.link) - 2)
+
+    ~H"""
+    <nav aria-label="Breadcrumb" {@rest}>
+      <.back class="sm:hidden" navigate={Enum.at(@link, @penultimate)[:href]}>
+        Back to <%= render_slot(Enum.at(@link, @penultimate)) %>
+      </.back>
+
+      <ol role="list" class="flex items-center hidden h-4 space-x-3 sm:flex">
+        <%= for {link, counter} <- Enum.with_index(@link) do %>
+          <%= if counter > 0 do %>
+            <Heroicons.chevron_right class="flex-shrink-0 w-4 h-4 text-white" />
+          <% end %>
+
+          <li>
+            <.link
+              class={[
+                "font-medium no-underline text-zinc-400 hover:text-zinc-300",
+                counter == @last && "text-zinc-500 hover:text-zinc-500 "
+              ]}
+              {link}
+            >
+              <%= render_slot(link) %>
+            </.link>
+          </li>
+        <% end %>
+      </ol>
+    </nav>
+    """
+  end
+
+  @doc """
+  Badge renders a colored pill span wrapping the content.
+
+  Custom colors can be manually provided via the class attribute when a
+  color assign is not set.
+
+  ## Examples
+
+      <Components.badge color={:blue}>Blue</Components.badge>
+      <Components.badge color={:blue}>Red</Components.badge>
+      <Components.badge>Grey</Components.badge>
+      <Components.badge class="bg-pink-900 text-green">Custom</Components.badge>
+
+  """
+  attr :color, :string, default: nil
+  attr :class, :string, default: nil
+  attr :rest, :global
+
+  def badge(assigns) do
+    ~H"""
+    <span
+      class={[
+        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
+        !@color && "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300",
+        @color == "red" && "bg-red-100 text-red-800",
+        @color == "yellow" && "bg-yellow-100 text-yellow-800",
+        @color == "green" && "bg-green-100 text-green-800",
+        @color == "blue" && "bg-blue-100 text-blue-800",
+        @color == "indigo" && "bg-indigo-100 text-indigo-800",
+        @color == "purple" && "bg-purple-100 text-purple-800",
+        @color == "pink" && "bg-pink-100 text-pink-800",
+        @class
+      ]}
+      {@rest}
+    >
+      <%= render_slot(@inner_block) %>
+    </span>
+    """
+  end
+
+  attr :id, :string
+  slot :inner_block
+  slot :aside_header
+  slot :aside_content
+
+  def slideover(assigns) do
+    ~H"""
+    <div
+      id={"#{@id}-overlay"}
+      class="fixed inset-0 z-10 hidden bg-opacity-75 bg-zinc-600"
+      aria-hidden="true"
+      phx-click={JS.exec("data-cancel", to: "##{@id}")}
+    >
+    </div>
+    <div
+      id={@id}
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      phx-remove={hide_slideover(@id)}
+      data-cancel={JS.exec("phx-remove")}
+      class={["hidden fixed inset-y-0 z-20 flex max-w-full transition-transform", @direction == "right" && "right-0", @direction == "left" && "left-0"]}
+    >
+      <.focus_wrap
+        id={"#{@id}-container"}
+        phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+        phx-key="escape"
+        phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
+        class="h-full"
+      >
+        <div class="w-screen h-full max-w-xs">
+          <div class={["flex flex-col h-full py-2.5 overflow-y-auto shadow-xl border-zinc-300 px-8 bg-zinc-900", @direction == "right" && "rounded-l-xl", @direction == "left" && "rounded-r-xl"]}>
+            <div class="flex items-start justify-between pt-2 pb-4">
+              <h2 class="text-lg uppercase text-zinc-900 font-base">
+                <%= render_slot(@aside_header) %>
+              </h2>
+
+              <div class="flex items-center h-7">
+                <.button type="button" phx-click={hide_slideover(@id)} color={nil} size={nil} class="p-1 mr-[-16px]">
+                  <span class="sr-only">
+                    Close panel
+                  </span>
+                  <.icon name="hero-x-mark-solid" class="flex-shrink-0 w-5 h-5" />
+                </.button>
+              </div>
+            </div>
+
+            <%= render_slot(@inner_block) %>
+
+            <div id={"#{@id}-content"}>
+              <%= render_slot(@aside_content) %>
+            </div>
+          </div>
+        </div>
+      </.focus_wrap>
+    </div>
+
     """
   end
 
@@ -500,5 +733,26 @@ defmodule Web.Components.Core do
     |> JS.add_class("hidden", to: "##{id}:not(.hidden)")
     |> JS.remove_class("text-violet-500", to: "##{id}-button.text-violet-500")
     |> JS.add_class("text-violet-500", to: "##{id}-button:not(.text-violet-500)")
+  end
+
+  @slideover_enter_transition {"duration-500", "translate-x-full", "translate-x-0"}
+  @slideover_leave_transition {"duration-500", "translate-x-0", "translate-x-full"}
+
+  def show_slideover(js \\ %JS{}, id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.show(to: "##{id}-overlay")
+    |> JS.set_attribute({"aria-hidden", false}, to: "##{id}")
+    |> JS.set_attribute({"aria-hidden", false}, to: "#{id}-overlay")
+    |> JS.focus_first(to: "##{id}-content")
+  end
+
+  def hide_slideover(js \\ %JS{}, id) do
+    js
+    |> JS.hide(to: "##{id}")
+    |> JS.hide(to: "##{id}-overlay")
+    |> JS.set_attribute({"aria-hidden", true}, to: "##{id}")
+    |> JS.set_attribute({"aria-hidden", true}, to: "#{id}-overlay")
+    |> JS.pop_focus()
   end
 end

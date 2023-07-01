@@ -12,6 +12,12 @@ window.addEventListener('phx:change-locale', e => {
     window.location.reload()
 })
 
+window.addEventListener("js:tab-selected", ({detail}) => {
+    let select = document.getElementById(detail.id)
+    let link = document.getElementById(select.value)
+    if (link) { link.click() }
+})
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}, hooks})
 

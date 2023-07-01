@@ -30,8 +30,11 @@ defmodule Web.Router do
 
     live_session :dashboard,
       on_mount: [{Authenticate, :user}, Assigns],
-      layout: {Layouts, :control} do
-      live "/dashboard", DashboardLive, :dashboard
+      layout: {Layouts, :tenant} do
+      live "/inventory/all", InventoryLive, :all
+      live "/inventory/products", InventoryLive, :products
+      live "/inventory/materials", InventoryLive, :materials
+
       live "/onboarding/brand", OnboardingLive, :brand
       live "/onboarding/auth", OnboardingLive, :auth
     end

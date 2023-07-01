@@ -4,7 +4,7 @@ defmodule MRP.Organisations.Tenant do
   schema "tenants" do
     field :subdomain, :string
     field :brand_color, :string
-    has_one :logo, :string
+    field :logo, :string
 
     has_many :organisations, MRP.Organisations.Organisation
     has_many :owners, MRP.Organisations.Owner
