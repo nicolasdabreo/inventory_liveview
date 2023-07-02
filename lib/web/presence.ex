@@ -10,7 +10,8 @@ defmodule Web.Presence do
     otp_app: :mrp,
     pubsub_server: MRP.PubSub
 
-  def init(_opts), do: {:ok, %{}} # user land state
+  # user land state
+  def init(_opts), do: {:ok, %{}}
 
   # def handle_metas(topic, %{joins: joins, leaves: leaves}, _presences, state) do
   #   for {_user_id, presence} <- joins, do: broadcast_entity_update(topic, presence)

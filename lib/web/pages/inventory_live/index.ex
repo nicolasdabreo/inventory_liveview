@@ -17,8 +17,8 @@ defmodule Web.Pages.InventoryLive.Index do
   @impl Phoenix.LiveView
   def handle_params(params, uri, socket) do
     {:noreply,
-      socket
-      |> apply_action(socket.assigns.live_action, params)}
+     socket
+     |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"item_id" => id}) do
@@ -38,10 +38,10 @@ defmodule Web.Pages.InventoryLive.Index do
     #     socket
     #     |> assign(:item, item)
     #   end
-      item = Inventory.get_item!(id)
+    item = Inventory.get_item!(id)
 
-      socket
-      |> assign(:item, item)
+    socket
+    |> assign(:item, item)
   end
 
   defp apply_action(socket, action, _params) when action in [:all, :materials, :products] do
@@ -157,10 +157,7 @@ defmodule Web.Pages.InventoryLive.Index do
           <% {:locked, reason} -> %>
             <.link class="text-gray-300 hover:cursor-not-allowed" title={reason}>Delete</.link>
           <% true -> %>
-            <.link
-              phx-click={JS.push("delete", value: %{id: item.id})}
-              data-confirm="Are you sure?"
-            >
+            <.link phx-click={JS.push("delete", value: %{id: item.id})} data-confirm="Are you sure?">
               Delete
             </.link>
         <% end %>

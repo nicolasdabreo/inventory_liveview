@@ -20,7 +20,9 @@ defmodule Web.Pages.InventoryLive.New do
     <.container class="max-w-3xl py-8 sm:py-12">
       <.header class="pb-4 mb-4 border-b text-zinc-200 border-zinc-700">
         Create a new inventory item
-        <:subtitle>Inventory items represent a collection of stock. You can provide many variants of the same collection to connect different providers and unit price points.</:subtitle>
+        <:subtitle>
+          Inventory items represent a collection of stock. You can provide many variants of the same collection to connect different providers and unit price points.
+        </:subtitle>
       </.header>
 
       <.simple_form for={@form} id="new-inventory-item-form" phx-change="validate" phx-submit="save">
@@ -44,9 +46,10 @@ defmodule Web.Pages.InventoryLive.New do
 
   def handle_event("save", %{"inventory_item" => params}, socket) do
     {:ok, inventory} = Inventory.create_inventory_item(params) |> IO.inspect()
+
     {:noreply,
-      socket
-      |> push_redirect(to: ~p"/inventory/all")}
+     socket
+     |> push_redirect(to: ~p"/inventory/all")}
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do

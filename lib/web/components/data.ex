@@ -5,88 +5,87 @@ defmodule Web.Components.Data do
 
   import Web.Gettext
 
-@doc ~S"""
-Renders a table with generic styling.
+  @doc ~S"""
+  Renders a table with generic styling.
 
-## Examples
+  ## Examples
 
-    <.table id="users" rows={@users}>
-      <:col :let={user} label="id"><%= user.id %></:col>
-      <:col :let={user} label="username"><%= user.username %></:col>
+      <.table id="users" rows={@users}>
+        <:col :let={user} label="id"><%= user.id %></:col>
+        <:col :let={user} label="username"><%= user.username %></:col>
 
- </.table>
-"""
-attr :id, :string, required: true
-attr :class, :string, default: ""
-attr :rows, :list, required: true
-attr :row_id, :any, default: nil, doc: "the function for generating the row id"
-attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
-
-attr :row_item, :any,
-  default: &Function.identity/1,
-  doc: "the function for mapping each row before calling the :col and :action slots"
-
-slot :col, required: true do
-  attr :label, :string
-end
-
-slot :action, doc: "the slot for showing user actions in the last table column"
-
-def table(assigns) do
-  assigns =
-    with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
-      assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
-    end
-
-~H"""
-  <div class={["overflow-y-auto sm:overflow-visible", @class]}>
-    <table class="w-[40rem] sm:w-full">
-      <thead class="text-left text-[0.8125rem] leading-6 text-zinc-300">
-        <tr>
-          <th class="w-1/12" />
-          <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
-          <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
-          <th class="w-1/12" />
-        </tr>
-      </thead>
-      <tbody
-        id={@id}
-        phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-        class="relative text-sm leading-6 border-t divide-y divide-zinc-700 border-zinc-500 text-zinc-300"
-      >
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-700">
-        <td />
-          <td
-            :for={{col, i} <- Enum.with_index(@col)}
-            phx-click={@row_click && @row_click.(row)}
-            class={["relative p-0", @row_click && "hover:cursor-pointer"]}
-          >
-            <div class="block py-4 pr-6">
-              <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
-              <span class={["relative", i == 0 && "font-semibold text-zinc-300"]}>
-                <%= render_slot(col, @row_item.(row)) %>
-              </span>
-            </div>
-          </td>
-          <td :if={@action != []} class="relative p-0 w-14">
-            <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
-              <span class="absolute left-0 -inset-y-px -right-4 sm:rounded-r-xl" />
-              <span
-                :for={action <- @action}
-                class="relative ml-4 font-semibold leading-6 text-zinc-200 hover:text-zinc-300"
-              >
-                <%= render_slot(action, @row_item.(row)) %>
-              </span>
-            </div>
-          </td>
-        <td />
-        </tr>
-      </tbody>
-    </table>
-  </div>
+   </.table>
   """
-end
+  attr :id, :string, required: true
+  attr :class, :string, default: ""
+  attr :rows, :list, required: true
+  attr :row_id, :any, default: nil, doc: "the function for generating the row id"
+  attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
 
+  attr :row_item, :any,
+    default: &Function.identity/1,
+    doc: "the function for mapping each row before calling the :col and :action slots"
+
+  slot :col, required: true do
+    attr :label, :string
+  end
+
+  slot :action, doc: "the slot for showing user actions in the last table column"
+
+  def table(assigns) do
+    assigns =
+      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
+        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
+      end
+
+    ~H"""
+    <div class={["overflow-y-auto sm:overflow-visible", @class]}>
+      <table class="w-[40rem] sm:w-full">
+        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-300">
+          <tr>
+            <th class="w-1/12" />
+            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+            <th class="w-1/12" />
+          </tr>
+        </thead>
+        <tbody
+          id={@id}
+          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+          class="relative text-sm leading-6 border-t divide-y divide-zinc-700 border-zinc-500 text-zinc-300"
+        >
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-700">
+            <td />
+            <td
+              :for={{col, i} <- Enum.with_index(@col)}
+              phx-click={@row_click && @row_click.(row)}
+              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+            >
+              <div class="block py-4 pr-6">
+                <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
+                <span class={["relative", i == 0 && "font-semibold text-zinc-300"]}>
+                  <%= render_slot(col, @row_item.(row)) %>
+                </span>
+              </div>
+            </td>
+            <td :if={@action != []} class="relative p-0 w-14">
+              <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
+                <span class="absolute left-0 -inset-y-px -right-4 sm:rounded-r-xl" />
+                <span
+                  :for={action <- @action}
+                  class="relative ml-4 font-semibold leading-6 text-zinc-200 hover:text-zinc-300"
+                >
+                  <%= render_slot(action, @row_item.(row)) %>
+                </span>
+              </div>
+            </td>
+            <td />
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    """
+  end
 
   defp tbody(%{rows: rows} = assigns) do
     ~H"""

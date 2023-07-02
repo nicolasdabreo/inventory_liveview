@@ -566,14 +566,22 @@ defmodule Web.Components.Core do
 
     ~H"""
     <nav aria-label="Breadcrumb" {@rest}>
-      <.link navigate={Enum.at(@link, @last)} class="flex no-underline truncate flex-shrink-1 sm:hidden text-zinc-400 hover:text-zinc-300">
+      <.link
+        navigate={Enum.at(@link, @last)}
+        class="flex no-underline truncate flex-shrink-1 sm:hidden text-zinc-400 hover:text-zinc-300"
+      >
         <%= render_slot(Enum.at(@link, @last)) %>
       </.link>
 
       <ol role="list" class="flex items-center hidden h-4 space-x-3 text-sm sm:flex">
         <%= for {link, counter} <- Enum.with_index(@link) do %>
           <%= if counter > 0 do %>
-            <svg class="flex-shrink-0 w-4 h-4 text-zinc-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <svg
+              class="flex-shrink-0 w-4 h-4 text-zinc-300"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
               <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
             </svg>
           <% end %>
