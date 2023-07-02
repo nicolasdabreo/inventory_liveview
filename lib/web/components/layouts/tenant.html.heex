@@ -20,13 +20,11 @@
               alt="Your Company"
             />
           </div>
-          <div class="hidden md:block">
-            <div class="flex items-baseline space-x-4">
-              <.breadcrumbs class="text-sm">
-                <:link href={~p"/"}>My Company</:link>
-                <:link href={~p"/"}><%= @page_title %></:link>
-              </.breadcrumbs>
-            </div>
+          <div class="flex items-baseline space-x-4 flex-shrink-1">
+            <.breadcrumbs class="min-w-0 text-sm">
+              <:link href={~p"/"}>Manufacturing</:link>
+              <:link href={~p"/"}><%= @page_title %></:link>
+            </.breadcrumbs>
           </div>
         </div>
         <div class="flex items-center space-x-3">

@@ -35,7 +35,7 @@ defmodule Web.Components.Core do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class={["mt-10 gap-y-8 bg-white", @class]}>
+      <div class={["flex flex-col space-y-8", @class]}>
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="flex items-center justify-between gap-6 mt-2">
           <%= render_slot(action, f) %>
@@ -56,7 +56,7 @@ defmodule Web.Components.Core do
   attr(:type, :string, default: "button", values: ~w(button submit reset))
   attr(:variant, :string, default: "solid", values: ~w(solid outline))
   attr(:size, :string, default: "md", values: ~w(sm md lg))
-  attr(:color, :string, default: "violet-500")
+  attr(:color, :string, default: "blue")
   attr(:patch, :string, default: nil)
   attr(:navigate, :string, default: nil)
   attr(:href, :string, default: nil)
@@ -126,10 +126,6 @@ defmodule Web.Components.Core do
   defp button_size_classes("lg"), do: "h-12 px-6 py-2 text-lg"
   defp button_size_classes(_size), do: ""
 
-  defp button_color_classes("violet-500"),
-    do:
-      "bg-violet-500 text-white hover:text-slate-100 hover:bg-violet-500 active:bg-violet-800 active:text-violet-100"
-
   defp button_color_classes("blue"),
     do:
       "bg-blue-600 text-white hover:text-slate-100 hover:bg-blue-500 active:bg-blue-800 active:text-blue-100"
@@ -158,10 +154,10 @@ defmodule Web.Components.Core do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-xl font-semibold leading-8 text-zinc-200">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-1 text-sm leading-6 text-zinc-400">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
@@ -223,12 +219,12 @@ defmodule Web.Components.Core do
     """
   end
 
-  attr :class, :string, default: nil
+  attr :class, :string, default: "max-w-7xl"
   slot :inner_block, required: true
 
   def container(assigns) do
     ~H"""
-    <div class={["px-4 mx-auto max-w-7xl sm:px-6 lg:px-8", @class]}>
+    <div class={["px-4 mx-auto sm:px-6 lg:px-8", @class]}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -266,7 +262,11 @@ defmodule Web.Components.Core do
       data-cancel={JS.exec(@on_cancel, "phx-remove")}
       class={["relative z-40 hidden", @class]}
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 transition-opacity bg-zinc-50/90" aria-hidden="true" />
+      <div
+        id={"#{@id}-overlay"}
+        class="fixed inset-0 hidden bg-opacity-75 bg-zinc-600"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -282,17 +282,23 @@ defmodule Web.Components.Core do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden transition bg-white shadow-lg shadow-zinc-700/10 ring-zinc-700/10 rounded-2xl p-14 ring-1"
+              class="relative hidden transition shadow-lg bg-zinc-900 text-zinc-100 ring-zinc-700/10 rounded-2xl p-14 ring-1"
             >
               <div class="absolute top-6 right-5">
-                <button
+                <.button
                   phx-click={JS.exec("data-cancel", to: "##{@id}")}
                   type="button"
                   class="flex-none p-3 -m-3 opacity-20 hover:opacity-40"
                   aria-label="close"
+                  color={nil}
+                  size={nil}
+                  class="p-1"
                 >
-                  <.icon name="hero-x-mark-solid" class="w-5 h-5" />
-                </button>
+                  <span class="sr-only">
+                    Close panel
+                  </span>
+                  <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
+                </.button>
               </div>
               <div id={"#{@id}-content"}>
                 <%= render_slot(@inner_block) %>
@@ -340,8 +346,8 @@ defmodule Web.Components.Core do
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" />
         <%= @title %>
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
-      <button type="button" class="absolute p-2 group top-1 right-1" aria-label={gettext("close")}>
+      <p class="text-sm leading-5"><%= msg %></p>
+      <button type="button" class="absolute top-0 p-2 group right-1" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
@@ -371,6 +377,7 @@ defmodule Web.Components.Core do
 
   """
   attr(:class, :string, default: "")
+  attr(:id, :string, required: true)
   attr(:rest, :global)
   slot(:button)
 
@@ -379,8 +386,6 @@ defmodule Web.Components.Core do
   end
 
   def menu(assigns) do
-    assigns = assign_new(assigns, :id, fn -> "menu-#{System.unique_integer([:positive])}" end)
-
     ~H"""
     <div class="flex">
       <div class="inline-block text-left group">
@@ -561,21 +566,23 @@ defmodule Web.Components.Core do
 
     ~H"""
     <nav aria-label="Breadcrumb" {@rest}>
-      <.back class="sm:hidden" navigate={Enum.at(@link, @penultimate)[:href]}>
-        Back to <%= render_slot(Enum.at(@link, @penultimate)) %>
-      </.back>
+      <.link navigate={Enum.at(@link, @last)} class="flex no-underline truncate flex-shrink-1 sm:hidden text-zinc-400 hover:text-zinc-300">
+        <%= render_slot(Enum.at(@link, @last)) %>
+      </.link>
 
-      <ol role="list" class="flex items-center hidden h-4 space-x-3 sm:flex">
+      <ol role="list" class="flex items-center hidden h-4 space-x-3 text-sm sm:flex">
         <%= for {link, counter} <- Enum.with_index(@link) do %>
           <%= if counter > 0 do %>
-            <Heroicons.chevron_right class="flex-shrink-0 w-4 h-4 text-white" />
+            <svg class="flex-shrink-0 w-4 h-4 text-zinc-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+            </svg>
           <% end %>
 
           <li>
             <.link
               class={[
-                "font-medium no-underline text-zinc-400 hover:text-zinc-300",
-                counter == @last && "text-zinc-500 hover:text-zinc-500 "
+                "no-underline text-zinc-400 hover:text-zinc-300 truncate flex-shrink-1",
+                counter == @last && "text-zinc-300 hover:text-zinc-200 "
               ]}
               {link}
             >
@@ -730,7 +737,7 @@ defmodule Web.Components.Core do
     js
     |> JS.show(to: "##{id}")
     |> JS.show(
-      to: "##{id}-bg",
+      to: "##{id}-overlay",
       transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
     )
     |> show("##{id}-container")
@@ -741,7 +748,7 @@ defmodule Web.Components.Core do
   def hide_modal(js \\ %JS{}, id) do
     js
     |> JS.hide(
-      to: "##{id}-bg",
+      to: "##{id}-overlay",
       transition: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
     )
     |> hide("##{id}-container")

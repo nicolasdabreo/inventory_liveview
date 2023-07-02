@@ -37,10 +37,11 @@ defmodule Web.Components.Form do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :required, :boolean, default: false, doc: "marks the field with an asterisk"
 
   attr :rest, :global,
     include: ~w(autocomplete cols disabled form list max maxlength min minlength
-                pattern placeholder readonly required rows size step)
+                pattern placeholder readonly rows size step)
 
   slot :inner_block
   slot :trailing
@@ -99,9 +100,7 @@ defmodule Web.Components.Form do
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          "min-h-[6rem] border-zinc-300 focus:border-zinc-400",
+          input_classes(),
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -136,9 +135,9 @@ defmodule Web.Components.Form do
         <.link
           id={"#{@id}-visibility-toggle"}
           phx-hook="PasswordVisibilityToggle"
-          class="box-border absolute inset-y-0 right-0 flex items-center m-2.5 cursor-pointer hover:bg-gray-100"
+          class="box-border absolute inset-y-0 right-0 flex items-center m-2.5 cursor-pointer hover:bg-zinc-100"
         >
-          <.icon name="hero-eye-mini" class="flex-shrink-0 w-5 h-5 text-gray-600" />
+          <.icon name="hero-eye-mini" class="flex-shrink-0 w-5 h-5 text-zinc-600" />
         </.link>
       </div>
 
@@ -168,7 +167,7 @@ defmodule Web.Components.Form do
           autofocus=""
           {@rest}
         />
-        <div :if={@trailing != []} class="absolute inset-y-0 right-0 flex items-center text-gray-500">
+        <div :if={@trailing != []} class="absolute inset-y-0 right-0 flex items-center text-zinc-500">
           <%= render_slot(@trailing) %>
         </div>
       </div>
@@ -222,9 +221,9 @@ defmodule Web.Components.Form do
 
   defp input_classes() do
     [
-      "block w-full appearance-none rounded border border-gray-300 bg-white",
-      "px-4 py-3 text-gray-900 placeholder-gray-400 focus:border-violet-500",
-      "focus:ring-4 focus:outline-none focus:ring-violet-200 sm:text-sm"
+      "block w-full appearance-none rounded border border-zinc-500 bg-zinc-700",
+      "px-4 py-3 text-zinc-200 placeholder-zinc-400",
+      "focus:ring-2 sm:text-sm"
     ]
   end
 
@@ -236,7 +235,7 @@ defmodule Web.Components.Form do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block mb-3 text-sm font-medium text-gray-700">
+    <label for={@for} class="block mb-3 text-sm font-medium text-zinc-200">
       <%= render_slot(@inner_block) %>
     </label>
     """

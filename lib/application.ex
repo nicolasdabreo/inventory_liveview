@@ -12,7 +12,8 @@ defmodule MRP.Application do
       MRP.Repo,
       {Oban, oban_config()},
       {Phoenix.PubSub, name: MRP.PubSub},
-      Web.Endpoint
+      Web.Presence,
+      Web.Endpoint,
     ]
 
     opts = [strategy: :one_for_one, name: MRP.Supervisor]

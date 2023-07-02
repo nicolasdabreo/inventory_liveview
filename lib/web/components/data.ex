@@ -3,131 +3,92 @@ defmodule Web.Components.Data do
 
   use Phoenix.Component
 
-  attr(:id, :string, required: true)
-  attr(:rows, :list, default: [])
-  attr(:selected_rows, :list, default: nil)
-  attr(:class, :string, default: "")
-  attr(:max_rows, :integer, default: 10)
+  import Web.Gettext
 
-  attr(:row_id, :any, default: nil, doc: "the function for generating the row id")
-  attr(:row_click, :any, default: nil, doc: "the function for handling phx-click on each row")
+@doc ~S"""
+Renders a table with generic styling.
 
-  attr(:group_click, :any, default: nil, doc: "the function for handling phx-click on a row group")
+## Examples
 
-  attr(:row_item, :any,
-    default: &Function.identity/1,
-    doc: "the function for mapping each row before calling the :col and :action slots"
-  )
+    <.table id="users" rows={@users}>
+      <:col :let={user} label="id"><%= user.id %></:col>
+      <:col :let={user} label="username"><%= user.username %></:col>
 
-  slot :col, required: true do
-    attr(:label, :string)
-    attr(:class, :string)
-  end
+ </.table>
+"""
+attr :id, :string, required: true
+attr :class, :string, default: ""
+attr :rows, :list, required: true
+attr :row_id, :any, default: nil, doc: "the function for generating the row id"
+attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
 
-  slot(:action, doc: "the slot for showing user actions in the last table column") do
-    attr(:disabled, :boolean)
-  end
+attr :row_item, :any,
+  default: &Function.identity/1,
+  doc: "the function for mapping each row before calling the :col and :action slots"
 
-  slot(:empty, doc: "the slot which shows when the rows are empty")
+slot :col, required: true do
+  attr :label, :string
+end
 
-  def table(assigns) do
-    assigns =
-      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
-        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
-      end
+slot :action, doc: "the slot for showing user actions in the last table column"
 
-    ~H"""
-    <div id={@id} class={["overflow-x-auto", @class]}>
-      <table class="w-full text-left whitespace-nowrap">
-        <colgroup>
-          <col class="w-1" />
-          <col class="lg:w-4/12" />
-          <col class="lg:w-2/12" />
-          <col class="lg:w-2/12" />
-          <col class="lg:w-2/12" />
-        </colgroup>
+def table(assigns) do
+  assigns =
+    with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
+      assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
+    end
 
-        <thead class="text-sm leading-6 text-white border-b border-white/10">
-          <tr>
-            <th :if={@selected_rows} />
-            <th :for={col <- @col} class="py-2 font-semibold truncate">
-              <%= col[:label] %>
-            </th>
-            <th class="relative p-0 pb-4"><span class="sr-only">Actions</span></th>
-          </tr>
-        </thead>
+~H"""
+  <div class={["overflow-y-auto sm:overflow-visible", @class]}>
+    <table class="w-[40rem] sm:w-full">
+      <thead class="text-left text-[0.8125rem] leading-6 text-zinc-300">
+        <tr>
+          <th class="w-1/12" />
+          <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+          <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+          <th class="w-1/12" />
+        </tr>
+      </thead>
+      <tbody
+        id={@id}
+        phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+        class="relative text-sm leading-6 border-t divide-y divide-zinc-700 border-zinc-500 text-zinc-300"
+      >
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-700">
+        <td />
+          <td
+            :for={{col, i} <- Enum.with_index(@col)}
+            phx-click={@row_click && @row_click.(row)}
+            class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+          >
+            <div class="block py-4 pr-6">
+              <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
+              <span class={["relative", i == 0 && "font-semibold text-zinc-300"]}>
+                <%= render_slot(col, @row_item.(row)) %>
+              </span>
+            </div>
+          </td>
+          <td :if={@action != []} class="relative p-0 w-14">
+            <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
+              <span class="absolute left-0 -inset-y-px -right-4 sm:rounded-r-xl" />
+              <span
+                :for={action <- @action}
+                class="relative ml-4 font-semibold leading-6 text-zinc-200 hover:text-zinc-300"
+              >
+                <%= render_slot(action, @row_item.(row)) %>
+              </span>
+            </div>
+          </td>
+        <td />
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  """
+end
 
-        <.tbody
-          :let={rows}
-          id={@id}
-          rows={@rows}
-          col={@col}
-          action={@action}
-          selected_rows={@selected_rows}
-          group_click={@group_click}
-        >
-          <.table_row
-            :for={{row, i} <- Enum.with_index(rows)}
-            index={i}
-            row={row}
-            row_click={@row_click}
-            id={@id}
-            col={@col}
-            selected_rows={@selected_rows}
-            action={@action}
-          />
-        </.tbody>
 
-        <tbody :if={Enum.empty?(@rows)} class="leading-6 border-b border-white/10">
-          <tr>
-            <td class="w-full p-8 mx-auto text-center" colspan={length(@col) + 1}>
-              <%= render_slot(@empty) %>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    """
-  end
-
-  defp tbody(%{rows: row_group} = assigns) when is_map(row_group) do
-    ~H"""
-    <tbody
-      :for={{group, rows} <- @rows}
-      id={@id}
-      phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-      class="divide-y divide-white/5"
-    >
-      <tr id={"#{@id}-group-#{group}"}>
-        <td
-          :if={@selected_rows}
-          scope="col"
-          class="py-1 text-right whitespace-nowrap bg-clip-padding"
-          phx-click={@group_click && @group_click.(group)}
-          phx-value-state={if whole_group_selected?(rows, @selected_rows), do: "off", else: "on"}
-        >
-          <input
-            type="checkbox"
-            class="flex flex-shrink-0 w-4 h-4 rounded-md accent-primary"
-            checked={whole_group_selected?(rows, @selected_rows)}
-          />
-        </td>
-        <td
-          scope="colgroup"
-          colspan={if Enum.empty?(@action), do: length(@col), else: length(@col) + 1}
-          class="py-2 text-xs font-semibold text-left"
-        >
-          <%= String.upcase(group) %>
-        </td>
-      </tr>
-      <div>
-        <%= render_slot(@inner_block, rows) %>
-      </div>
-    </tbody>
-    """
-  end
-
-  defp tbody(%{rows: rows} = assigns) when is_list(rows) do
+  defp tbody(%{rows: rows} = assigns) do
     ~H"""
     <tbody
       id={@id}
@@ -149,8 +110,7 @@ defmodule Web.Components.Data do
       id={"#{@id}-#{@row.id}"}
       class={[
         "group focus:ring-inset",
-        @row_click && "hover:cursor-pointer",
-        @row.id in @selected_rows && "bg-zinc-800"
+        @row_click && "hover:cursor-pointer"
       ]}
       tabindex={if @row_click, do: "0", else: "-1"}
     >

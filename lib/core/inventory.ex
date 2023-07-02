@@ -6,21 +6,27 @@ defmodule Core.Inventory do
 
   ## Changesets
 
-  def change_inventory_item(inventory_or_changeset, attrs) do
+  def change_inventory_item(inventory_or_changeset \\ %Inventory.Item{}, attrs) do
     Inventory.Item.changeset(inventory_or_changeset, attrs)
   end
 
   ## Events
 
-  def create_inventory_item(organisation_id) do
-    broadcast(organisation_id, %Events.InventoryItemCreated{list: []})
+  def create_inventory_item(attrs) do
+    %Inventory.Item{}
+    |> Inventory.Item.create_changeset(attrs)
+    |> Repo.insert()
+
+    # broadcast(organisation_id, %Events.InventoryItemCreated{list: []})
   end
 
   ## Reads
 
-  # def list_inventory() do
+  def get_item!(id), do: Repo.get!(Inventory.Item, id)
 
-  # end
+  def list_inventory() do
+    Repo.all(Inventory.Item)
+  end
 
   ## PubSub
 
