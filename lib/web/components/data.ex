@@ -28,6 +28,7 @@ defmodule Web.Components.Data do
 
   slot :col, required: true do
     attr :label, :string
+    attr :sort, :boolean
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -39,20 +40,30 @@ defmodule Web.Components.Data do
       end
 
     ~H"""
-    <div class={["overflow-y-auto sm:overflow-visible", @class]}>
-      <table class="w-[40rem] sm:w-full">
-        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-300">
+      <table class={["w-[40rem] sm:w-full", @class]}>
+        <thead class="text-left text-[0.8125rem] text-zinc-300 bg-zinc-800 pt-4">
           <tr>
             <th class="w-1/12" />
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
-            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+            <th :for={col <- @col} class="p-0 py-2 pr-6 font-normal">
+              <%= if col[:sort] do %>
+                <a href="#" class="inline-flex group">
+                  <%= col[:label] %>
+                  <span :if={col[:sort]} class="flex-none ml-2 text-gray-300 px-0.5 bg-gray-700 rounded group-hover:bg-gray-600">
+                    <Web.Components.Core.icon name="hero-chevron-down-solid" class="w-4 h-4" />
+                  </span>
+                </a>
+              <% else %>
+                <%= col[:label] %>
+              <% end %>
+            </th>
+            <th class="relative p-0 py-2"><span class="sr-only"><%= gettext("Actions") %></span></th>
             <th class="w-1/12" />
           </tr>
         </thead>
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative text-sm leading-6 border-t divide-y divide-zinc-700 border-zinc-500 text-zinc-300"
+          class="relative text-sm border-t divide-y divide-zinc-800 border-zinc-800 text-zinc-300"
         >
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-700">
             <td />
@@ -61,7 +72,7 @@ defmodule Web.Components.Data do
               phx-click={@row_click && @row_click.(row)}
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
-              <div class="block py-4 pr-6">
+              <div class="block">
                 <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-300"]}>
                   <%= render_slot(col, @row_item.(row)) %>
@@ -73,7 +84,7 @@ defmodule Web.Components.Data do
                 <span class="absolute left-0 -inset-y-px -right-4 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-200 hover:text-zinc-300"
+                  class="relative ml-4 font-semibold text-zinc-200 hover:text-zinc-300"
                 >
                   <%= render_slot(action, @row_item.(row)) %>
                 </span>
@@ -83,7 +94,6 @@ defmodule Web.Components.Data do
           </tr>
         </tbody>
       </table>
-    </div>
     """
   end
 
@@ -138,7 +148,7 @@ defmodule Web.Components.Data do
       </td>
       <td :if={@action != []} class="relative p-0 ">
         <div class="py-1 text-right whitespace-nowrap">
-          <span :for={action <- @action} class="flex flex-row items-center gap-3 leading-6">
+          <span :for={action <- @action} class="flex flex-row items-center gap-3">
             <%= render_slot(action, @row) %>
           </span>
         </div>
@@ -165,7 +175,7 @@ defmodule Web.Components.Data do
     ~H"""
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
+        <div :for={item <- @item} class="flex gap-4 py-4 text-sm sm:gap-8">
           <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>

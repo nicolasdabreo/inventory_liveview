@@ -276,13 +276,13 @@ defmodule Web.Components.Core do
         tabindex="0"
       >
         <div class="flex items-center justify-center min-h-full">
-          <div class="w-full max-w-3xl p-4 sm:p-6 lg:py-8">
+          <div class="w-full h-full p-4 overflow-x-hidden sm:p-6 lg:py-8 sm:max-w-3xl sm:h-max sm:overflow-y-hidden">
             <.focus_wrap
               id={"#{@id}-container"}
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden transition shadow-lg bg-zinc-900 text-zinc-100 ring-zinc-700/10 rounded-2xl p-14 ring-1"
+              class="relative hidden p-8 transition shadow-lg bg-zinc-900 text-zinc-100 ring-zinc-700/10 rounded-2xl sm:p-12 ring-1"
             >
               <div class="absolute top-6 right-5">
                 <.button
@@ -376,28 +376,33 @@ defmodule Web.Components.Core do
     </Components.menu>
 
   """
+  attr(:menu_items_wrapper_class, :string,
+  default: "",
+  doc: "any extra CSS class for menu item wrapper container"
+)
   attr(:class, :string, default: "")
   attr(:id, :string, required: true)
   attr(:rest, :global)
-  slot(:button)
+  attr(:placement, :string, default: "left", values: ["left", "right"])
 
+  slot(:trigger)
   slot :item do
     attr(:role, :string)
   end
 
   def menu(assigns) do
     ~H"""
-    <div class="flex">
+    <div class="flex h-full">
       <div class="inline-block text-left group">
-        <%= render_slot(@button, {fn -> toggle_menu(@id) end, @id <> "-button"}) %>
+        <%= render_slot(@trigger, {fn -> toggle_menu(@id) end, @id <> "-button"}) %>
 
         <div
           id={@id}
-          class={[
-            "z-50 absolute mt-2 w-full hidden border border-zinc-700
-              left-auto bottom-auto right-0 origin-top-right transform inset-x-0
-              scale-100 bg-zinc-800 rounded-lg shadow-lg opacity-100 ring-1 min-w-max
-              ring-black ring-opacity-5 focus:outline-none overflow-y-auto p-2",
+          class={[placement_class(@placement),
+            "absolute z-50 mt-2 w-full hidden border border-zinc-700
+              bottom-auto transform inset-x-0
+              bg-zinc-800 rounded-lg shadow-lg ring-1 min-w-max
+              ring-black ring-opacity-5 focus:outline-none overflow-y-auto",
             @class
           ]}
           role="menu"
@@ -418,6 +423,19 @@ defmodule Web.Components.Core do
     """
   end
 
+  # .pc-dropdown__menu-items-wrapper {
+  #   @apply absolute z-30 w-56 mt-2 bg-white rounded-md shadow-lg dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none;
+  # }
+  # .pc-dropdown__menu-items-wrapper-placement--left {
+  #   @apply right-0 origin-top-right;
+  # }
+  # .pc-dropdown__menu-items-wrapper-placement--right {
+  #   @apply left-0 origin-top-left;
+  # }
+
+  defp placement_class("left"), do: "left-auto right-0 origin-top-right"
+  defp placement_class("right"), do: "left-0 right-auto origin-top-left"
+
   attr :class, :string, default: ""
   attr :rest, :global, default: %{}, include: ~w(href navigate patch)
   slot :inner_block, required: true
@@ -426,7 +444,7 @@ defmodule Web.Components.Core do
     ~H"""
     <.link
       class={[
-        "block text-sm px-4 py-2 text-zinc-300 no-underline hover:bg-zinc-700 hover:text-zinc-200 focus:bg-zinc-700 focus:text-zinc-200 focus:ring-0 rounded-lg",
+        "m-1 flex items-center text-sm px-3 py-1 text-zinc-300 no-underline hover:bg-zinc-700 hover:text-zinc-200 focus:bg-zinc-700 focus:text-zinc-200 focus:ring-0 rounded-lg",
         @class
       ]}
       {@rest}
@@ -436,7 +454,7 @@ defmodule Web.Components.Core do
     """
   end
 
-  attr(:class, :string, default: "py-4")
+  attr(:class, :string, default: "")
   attr(:rest, :global)
 
   slot(:inner_block)
@@ -445,7 +463,7 @@ defmodule Web.Components.Core do
     ~H"""
     <div class={["relative", @class]} {@rest}>
       <div class="absolute inset-0 flex items-center">
-        <div class="w-full border-t border-zinc-300"></div>
+        <div class="w-full border-t border-zinc-600"></div>
       </div>
       <%= if @inner_block do %>
         <div class="relative flex justify-center">
@@ -485,7 +503,7 @@ defmodule Web.Components.Core do
           phx-change={JS.dispatch("js:tab-selected", detail: %{id: "#{@id}-mobile"})}
           class="block w-full py-2 pl-3 pr-10 text-base rounded-md border-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
         >
-          <option :for={{tab, i} <- Enum.with_index(@tab)} value={"#{@id}-#{i}"}>
+          <option :for={{tab, i} <- Enum.with_index(@tab)} value={"#{@id}-#{i}"} selected={tab.selected}>
             <%= render_slot(tab) %>
           </option>
         </select>
