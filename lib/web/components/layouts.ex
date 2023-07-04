@@ -18,7 +18,7 @@ defmodule Web.Components.Layouts do
     ~H"""
     <div class="relative">
       <.menu id="locale-select" class="w-32">
-        <:button :let={{toggle_menu, button_id}}>
+        <:trigger :let={{toggle_menu, button_id}}>
           <button
             id={button_id}
             phx-click={toggle_menu.()}
@@ -30,7 +30,7 @@ defmodule Web.Components.Layouts do
               <.icon name="hero-chevron-up-down-solid" class="text-gray-400" />
             </span>
           </button>
-        </:button>
+        </:trigger>
         <:item :for={{label, value} <- locale_options()}>
           <.menu_link phx-click="change_locale" phx-value-locale={value}><%= label %></.menu_link>
         </:item>

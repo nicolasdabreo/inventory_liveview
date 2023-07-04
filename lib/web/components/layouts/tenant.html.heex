@@ -84,12 +84,10 @@
     </div>
   </nav>
 
-  <header class="bg-black border-zinc-600 border-y">
+  <header :if={@tabs != []} class="bg-black border-zinc-600 border-y">
     <div class="px-4 py-3 mx-auto sm:py-0">
       <.tabs id="primary-nav-tabs">
-        <:tab navigate={~p"/"}>Sales</:tab>
-        <:tab navigate={~p"/"}>Planning</:tab>
-        <:tab selected navigate={~p"/"} badge={2}>Inventory</:tab>
+        <:tab :for={tab <- @tabs} {tab}><%= tab.text %></:tab>
       </.tabs>
     </div>
   </header>

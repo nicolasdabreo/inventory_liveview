@@ -15,6 +15,7 @@ defmodule Web.Assigns do
     {:cont,
      socket
      |> assign_uri_info()
+     |> assign(:tabs, [])
      |> assign_locale_info(locale)}
   end
 
