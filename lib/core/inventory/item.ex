@@ -7,6 +7,7 @@ defmodule Core.Inventory.Item do
     field :category, :string
     field :supplier_information, :string
     field :unit_price, :decimal
+    field :unit_of_measurement, :string
     field :quantity_in_stock, :integer
     field :reorder_point, :integer
 

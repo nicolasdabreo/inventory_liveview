@@ -28,6 +28,7 @@ defmodule Web.Pages.InventoryLive.New do
       <.simple_form for={@form} id="new-inventory-item-form" phx-change="validate" phx-submit="save">
         <.input field={@form[:name]} type="text" label="Item name" required />
         <.input field={@form[:unit_price]} type="number" label="Unit price" required />
+        <.input field={@form[:unit_of_measurement]} type="text" label="Unit of measurement" required placeholder="kg" />
         <.input field={@form[:reorder_point]} type="number" label="Reorder point" required />
         <.input field={@form[:quantity_in_stock]} type="number" label="Quantity in stock" required />
 
@@ -45,7 +46,7 @@ defmodule Web.Pages.InventoryLive.New do
   end
 
   def handle_event("save", %{"inventory_item" => params}, socket) do
-    {:ok, inventory} = Inventory.create_inventory_item(params) |> IO.inspect()
+    {:ok, inventory} = Inventory.create_inventory_item(params)
 
     {:noreply,
      socket
