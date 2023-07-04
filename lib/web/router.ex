@@ -38,6 +38,10 @@ defmodule Web.Router do
       live "/inventory/new/product", InventoryLive.New, :new_product
       live "/inventory/new/material", InventoryLive.New, :new_material
 
+      live "/sales", SalesLive.Index, :index
+
+      live "/planning", PlanningLive.Index, :index
+
       live "/onboarding/brand", OnboardingLive, :brand
       live "/onboarding/auth", OnboardingLive, :auth
     end
