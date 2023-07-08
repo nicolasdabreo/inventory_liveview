@@ -19,8 +19,11 @@ defmodule Web.Components.Data do
   attr :id, :string, required: true
   attr :class, :string, default: ""
   attr :rows, :list, required: true
+  attr :sort, :any, required: true
+  attr :selected_rows, :any, default: []
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :row_class, :string, default: ""
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -28,7 +31,8 @@ defmodule Web.Components.Data do
 
   slot :col, required: true do
     attr :label, :string
-    attr :sort, :boolean
+    attr :data_label, :string
+    attr :align, :atom
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -40,46 +44,74 @@ defmodule Web.Components.Data do
       end
 
     ~H"""
-      <table class={["w-[40rem] sm:w-full", @class]}>
-        <thead class="text-left text-[0.8125rem] text-zinc-300 bg-zinc-800 pt-4">
-          <tr>
-            <th class="w-1/12" />
-            <th :for={col <- @col} class="p-0 py-2 pr-6 font-normal">
-              <%= if col[:sort] do %>
-                <a href="#" class="inline-flex group">
-                  <%= col[:label] %>
-                  <span :if={col[:sort]} class="flex-none ml-2 text-gray-300 px-0.5 bg-gray-700 rounded group-hover:bg-gray-600">
-                    <Web.Components.Core.icon name="hero-chevron-down-solid" class="w-4 h-4" />
-                  </span>
-                </a>
-              <% else %>
-                <%= col[:label] %>
-              <% end %>
-            </th>
-            <th class="relative p-0 py-2"><span class="sr-only"><%= gettext("Actions") %></span></th>
-            <th class="w-1/12" />
+    <table role="table" class={["overflow-x-auto w-full table-fixed", @class]}>
+      <thead role="rowgroup" class="sticky text-left text-[0.8125rem] text-zinc-300 bg-zinc-800 pt-4">
+        <tr role="row">
+          <th class="sticky top-0 z-10 hidden sm:table-cell w-12" role="columnheader" />
+          <th role="columnheader" :for={col <- @col} class={[" sticky top-0 z-10 hidden sm:table-cell py-2 px-2 font-normal", col[:class], text_align_classes(col[:align])]}>
+            <%= col[:label] %>
+          </th>
+          <th class="hidden sticky top-0 z-10 sm:table-cell relative py-2 w-24" role="columnheader"><span class="sr-only"><%= gettext("Actions") %></span></th>
+          <th :if={@action != []} class="hidden sticky top-0 z-10 sm:table-cell w-12" role="columnheader" />
+        </tr>
+      </thead>
+      <tbody
+        id={@id}
+        role="rowgroup"
+        phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
+        class="relative text-sm border-t divide-y divide-zinc-800 border-zinc-800 text-zinc-300"
+      >
+        <%= if @loading do %>
+          <tr role="row" :for={_i <- 1..10}>
+            <td class="" role="cell" />
+            <td class="w-full sm:hidden p-1" role="cell"><div class="h-10 w-full rounded bg-zinc-700"></div></td>
+            <td class="hidden sm:table-cell p-1" role="cell" :for={_i <- @col}><div class="h-10 rounded bg-zinc-700"></div></td>
+            <td :if={@action != []} class="" role="cell" />
           </tr>
-        </thead>
-        <tbody
-          id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative text-sm border-t divide-y divide-zinc-800 border-zinc-800 text-zinc-300"
-        >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-700">
-            <td />
+        <% else %>
+          <tr role="row" :for={{dom_id, _} = row <- @rows} id={@row_id && @row_id.(row)} class={["group hover:bg-zinc-700", @row_class]}>
+            <%= if dom_id in @selected_rows do %>
+              <td class="relative hidden sm:table-cell w-12" role="cell">
+                <div class="absolute inset-y-0 left-0 w-1 bg-blue-500"></div>
+                <div
+                  class={["pl-4 py-1 text-right whitespace-nowrap", @row_click && "hover:cursor-pointer"]}
+                  phx-click={@row_click && @row_click.(row)}
+                >
+                  <input
+                    type="checkbox"
+                    class="flex flex-shrink-0 w-4 h-4"
+                    checked
+                  />
+                </div>
+              </td>
+            <% else %>
+              <td class="relative hidden sm:table-cell w-12" role="cell">
+                <div
+                  class={["pl-4 py-1 text-right whitespace-nowrap opacity-0 group-hover:opacity-100 peer", @row_click && "group-hover:cursor-pointer"]}
+                  phx-click={@row_click && @row_click.(row)}
+                >
+                  <input
+                    type="checkbox"
+                    class="flex flex-shrink-0 w-4 h-4"
+                  />
+                </div>
+              </td>
+            <% end %>
             <td
               :for={{col, i} <- Enum.with_index(@col)}
               phx-click={@row_click && @row_click.(row)}
-              class={["relative p-0", @row_click && "hover:cursor-pointer"]}
+              class={["relative px-3 py-1", @row_click && "hover:cursor-pointer", col[:class], text_align_classes(col[:align])]}
+              tabindex={if @row_click, do: "0", else: "-1"}
             >
               <div class="block">
+                <p :if={col[:data_label]} class="inline-block sm:hidden font-semibold mr-2"><%= col[:data_label] %>:</p>
                 <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-300"]}>
+                <span class={["relative inline-block w-28 sm:w-auto", i == 0 && "font-semibold text-zinc-300"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
-            <td :if={@action != []} class="relative p-0 w-14">
+            <td class="hidden sm:table-cell w-24" role="cell" :if={@action != []} class="relative px-3">
               <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
                 <span class="absolute left-0 -inset-y-px -right-4 sm:rounded-r-xl" />
                 <span
@@ -90,72 +122,17 @@ defmodule Web.Components.Data do
                 </span>
               </div>
             </td>
-            <td />
+            <td class="hidden sm:table-cell w-12" role="cell" />
           </tr>
-        </tbody>
-      </table>
+        <% end %>
+      </tbody>
+    </table>
     """
   end
 
-  defp tbody(%{rows: rows} = assigns) do
-    ~H"""
-    <tbody
-      id={@id}
-      phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-      class="divide-y divide-white/5"
-    >
-      <%= render_slot(@inner_block, @rows) %>
-    </tbody>
-    """
-  end
-
-  defp whole_group_selected?(rows, selected_rows) do
-    Enum.all?(rows, &(&1.id in selected_rows))
-  end
-
-  defp table_row(assigns) do
-    ~H"""
-    <tr
-      id={"#{@id}-#{@row.id}"}
-      class={[
-        "group focus:ring-inset",
-        @row_click && "hover:cursor-pointer"
-      ]}
-      tabindex={if @row_click, do: "0", else: "-1"}
-    >
-      <td :if={@selected_rows} scope="col" class="p-0">
-        <div
-          class={["px-4 py-1 text-right whitespace-nowrap", @row_click && "hover:cursor-pointer"]}
-          phx-click={@row_click && @row_click.(@row)}
-        >
-          <input
-            type="checkbox"
-            class="flex flex-shrink-0 w-4 h-4 accent-violet-500"
-            checked={@row.id in @selected_rows}
-          />
-        </div>
-      </td>
-      <td
-        :for={{col, _i} <- Enum.with_index(@col)}
-        phx-click={@row_click && @row_click.(@row)}
-        class={["py-1", @row_click && "hover:cursor-pointer", col[:class]]}
-      >
-        <div class="block py-1">
-          <span class="relative">
-            <%= render_slot(col, @row) %>
-          </span>
-        </div>
-      </td>
-      <td :if={@action != []} class="relative p-0 ">
-        <div class="py-1 text-right whitespace-nowrap">
-          <span :for={action <- @action} class="flex flex-row items-center gap-3">
-            <%= render_slot(action, @row) %>
-          </span>
-        </div>
-      </td>
-    </tr>
-    """
-  end
+  defp text_align_classes(:right), do: "text-right"
+  defp text_align_classes(:center), do: "text-center"
+  defp text_align_classes(_left), do: "text-left"
 
   @doc """
   Renders a data list.

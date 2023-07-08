@@ -8,7 +8,8 @@ defmodule Core.Inventory.Item do
     field :supplier_information, :string
     field :unit_price, :decimal
     field :unit_of_measurement, :string
-    field :quantity_in_stock, :integer
+    field :quantity_in_stock, :decimal
+    field :committed_stock, :decimal, default: Decimal.new("0.0")
     field :reorder_point, :integer
 
     field :actions, :map, virtual: true, default: %{edit: true, delete: true}
@@ -25,6 +26,7 @@ defmodule Core.Inventory.Item do
       :supplier_information,
       :unit_price,
       :quantity_in_stock,
+      :committed_stock,
       :reorder_point
     ])
     |> validate_required([

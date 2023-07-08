@@ -24,9 +24,20 @@ defmodule Core.Inventory do
 
   def get_item!(id), do: Repo.get!(Inventory.Item, id)
 
+  def calculate_stock_difference(%Inventory.Item{
+    quantity_in_stock: quantity_in_stock,
+    committed_stock: committed_stock,
+    reorder_point: reorder_point
+  }) do
+    remaining_stock = Decimal.sub(quantity_in_stock, committed_stock)
+    difference = Decimal.sub(remaining_stock, reorder_point)
+    difference
+  end
+
   def list_inventory() do
     Repo.all(Inventory.Item)
   end
+
 
   ## PubSub
 

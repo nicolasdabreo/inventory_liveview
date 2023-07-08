@@ -10,7 +10,8 @@ defmodule MRP.Repo.Migrations.CreateInventoryItems do
       add :supplier_information, :string
       add :unit_price, :decimal, null: false
       add :unit_of_measurement, :string
-      add :quantity_in_stock, :integer, null: false
+      add :quantity_in_stock, :decimal, null: false
+      add :committed_stock, :decimal, null: false
       add :reorder_point, :integer, null: false
 
       timestamps()

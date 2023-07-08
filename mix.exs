@@ -36,9 +36,9 @@ defmodule MRP.MixProject do
       {:phoenix, "~> 1.7"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3"},
-      {:phoenix_live_view, "~> 0.18"},
+      {:phoenix_live_view, "~> 0.19"},
       {:heroicons, "~> 0.5"},
-      {:phoenix_live_dashboard, "~> 0.7"},
+      {:phoenix_live_dashboard, "~> 0.8"},
       {:gettext, "~> 0.22"},
       {:plug_cowboy, "~> 2.6"},
 
@@ -63,9 +63,10 @@ defmodule MRP.MixProject do
       {:ex_cldr_calendars, "~> 1.22"},
 
       # dev & test
+      {:faker, "~> 0.17", only: [:test, :dev]},
       {:phoenix_live_reload, "~> 1.4", only: :dev},
       {:floki, "~> 0.34", only: :test},
-      {:credo, "~> 1.7"},
+      {:credo, "~> 1.7", only: :dev},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev}
     ]

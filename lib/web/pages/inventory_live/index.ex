@@ -15,42 +15,57 @@ defmodule Web.Pages.InventoryLive.Index do
     ])
   end
 
-  @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
-    Endpoint.subscribe(@topic)
+  defp assign_filter(socket, filter) do
     inventory = Inventory.list_inventory()
 
-    {:ok,
-      assign(socket, :page_title, "Inventory")
-      |> stream(:inventory, inventory)}
-    end
+    socket
+    |> assign(filter: filter)
+    |> stream(:inventory, inventory, reset: true)
+  end
 
-    @impl Phoenix.LiveView
-    def handle_params(params, uri, socket) do
+  defp assign_sorting_options(socket, options) do
+    inventory = Inventory.list_inventory()
+
+    socket
+    |> assign(options: options)
+    |> stream(:inventory, inventory, reset: true)
+  end
+
+  @impl Phoenix.LiveView
+  def mount(_params, _session, socket) do
+    filter = %{name: ""}
+    options = %{
+      sort_order: :asc,
+      sort_by: :name
+    }
+
+    socket =
+      if connected?(socket) do
+        Endpoint.subscribe(@topic)
+        inventory = Inventory.list_inventory()
+
+        socket
+        |> stream(:inventory, inventory, reset: true)
+      else
+        stream(socket, :inventory, [])
+      end
+
+      {:ok,
+        socket
+        |> assign(:page_title, "Inventory")
+        |> assign(:options, options)
+        |> assign(:filter, filter)}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_params(params, uri, socket) do
     {:noreply,
       socket
-      |> apply_action(socket.assigns.live_action, params)
       |> assign_tabs()
-    }
+      |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"item_id" => id}) do
-    # cond do
-    #   user = Presence.is_entity_used(@topic, id) ->
-    #     error_message = "is already being edited"
-
-    #     socket
-    #     |> put_flash(:error, error_message)
-    #     |> push_patch(to: ~p"/inventory/all")
-
-    #   true ->
-    #     item = Inventory.get_item!(id)
-    #     # Track when opening the entity
-    #     Presence.track_live_entity(self(), @topic, socket.assigns.current_user, item)
-
-    #     socket
-    #     |> assign(:item, item)
-    #   end
     item = Inventory.get_item!(id)
 
     socket
@@ -66,6 +81,22 @@ defmodule Web.Pages.InventoryLive.Index do
   end
 
   @impl Phoenix.LiveView
+  def handle_event("filter", params, socket) do
+    filter = %{name: params["name"]}
+    {:noreply, assign_filter(socket, filter)}
+  end
+
+
+  def handle_event("sort", %{"order" => sort_order, "by" => sort_by}, socket) do
+    options = %{
+      sort_order: String.to_existing_atom(sort_order),
+      sort_by: String.to_existing_atom(sort_by)
+    }
+
+    {:noreply, assign_sorting_options(socket, options)}
+  end
+
+  @impl Phoenix.LiveView
   def handle_info(%{event: "presence_diff"} = _diff, socket) do
     {:noreply, socket}
   end
@@ -75,7 +106,7 @@ defmodule Web.Pages.InventoryLive.Index do
     ~H"""
     <span class="inline-flex justify-between w-full p-3 border-b shadow-sm border-zinc-600">
       <div class="inline-flex sm:space-x-4">
-        <div class="hidden sm:inline-flex">
+        <div class="inline-flex">
           <.link
             patch={~p"/inventory/all"}
             class={[
@@ -123,8 +154,8 @@ defmodule Web.Pages.InventoryLive.Index do
             </:item>
             <:item><.divider /></:item>
             <:item>
-              <.menu_link><.icon name="hero-magnifying-glass-solid" class="w-4 h-4 mr-3" />Name</.menu_link>
-              <.menu_link><.icon name="hero-chart-bar-solid" class="w-4 h-4 mr-3" />SKU</.menu_link>
+              <.menu_link phx-click="filter" phx-value-name=""><.icon name="hero-magnifying-glass-solid" class="w-4 h-4 mr-3" />Name</.menu_link>
+              <.menu_link phx-click="filter" phx-value-sku=""><.icon name="hero-chart-bar-solid" class="w-4 h-4 mr-3" />SKU</.menu_link>
               <.menu_link><.icon name="hero-folder-solid" class="w-4 h-4 mr-3" />Category</.menu_link>
               <.menu_link><.icon name="hero-building-office-solid" class="w-4 h-4 mr-3" />Supplier</.menu_link>
             </:item>
@@ -177,31 +208,66 @@ defmodule Web.Pages.InventoryLive.Index do
       item={@item}
     />
 
-    <div class="mb-4 overflow-y-auto sm:overflow-visible">
-      <.table id="all-inventory-table" rows={@streams.inventory} class="text-sm text-zinc-300">
-        <:col sort :let={{_id, item}} label="Name"><%= item.name %></:col>
-        <:col sort :let={{_id, item}} label="Price per unit"><%= item.unit_price %></:col>
-        <:col sort :let={{_id, item}} label="# In stock"><%= item.quantity_in_stock %><%= item.unit_of_measurement %></:col>
-        <:action :let={{_id, item}}>
-          <%= case item.actions.edit do %>
-            <% {:locked, reason} -> %>
-              <.link class="text-gray-300 hover:cursor-not-allowed" title={reason}>Edit</.link>
-            <% true -> %>
-              <.link patch={~p"/inventory/#{item}/edit"}>Edit</.link>
+    <div class="mb-4 overflow-x-auto overflow-y-hidden">
+      <.table id="all-inventory-table" rows={@streams.inventory} loading={not connected?(@socket)} class="text-sm text-zinc-300" row_class="grid grid-cols-1 sm:table-row p-4">
+        <:col class="w-48 col-span-2" :let={{_id, item}} label={sortable_link("Name", :name, @options)}>
+          <%= item.name %>
+          <p class="text-xs text-zinc-500"><%= item.category || "Placeholder" %></p>
+        </:col>
+        <:col data_label="Price per unit" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label={sortable_link("Price per unit", :unit_price, @options)}>£<%= item.unit_price %></:col>
+        <:col data_label="In stock" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label={sortable_link("In stock", :quantity_in_stock, @options)}><%= item.quantity_in_stock %><%= item.unit_of_measurement %></:col>
+        <:col data_label="Committed" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label={sortable_link("Commited", :committed_stock, @options)}><%= item.committed_stock %><%= item.unit_of_measurement %></:col>
+        <:col data_label="Reorder point" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label="Reorder point"><%= item.reorder_point %><%= item.unit_of_measurement %></:col>
+        <:col class="border-t border-zinc-500 sm:border-none mt-1 pt-1 w-full sm:w-24 col-start-1" align={:right} :let={{_id, item}} label="Diff">
+          <%= if diff = Decimal.round(Inventory.calculate_stock_difference(item)) do %>
+            <%= if Decimal.negative?(diff) do %>
+              <p class="font-semibold text-red-600"><%= diff %><%= item.unit_of_measurement %></p>
+            <% else %>
+              <p class="font-semibold"><%= diff %><%= item.unit_of_measurement %></p>
+            <% end %>
           <% end %>
-        </:action>
-        <:action :let={{_id, item}}>
-          <%= case item.actions.delete do %>
-            <% {:locked, reason} -> %>
-              <.link class="text-gray-300 hover:cursor-not-allowed" title={reason}>Delete</.link>
-            <% true -> %>
-              <.link phx-click={JS.push("delete", value: %{id: item.id})} data-confirm="Are you sure?">
-                Delete
-              </.link>
-          <% end %>
-        </:action>
+        </:col>
       </.table>
     </div>
     """
   end
+
+  defp sortable_link(label, col, options) do
+    assigns = %{
+      label: label,
+      col: col,
+      sort_order: get_opposite(options.sort_order),
+      sort_by: options.sort_by
+    }
+
+    ~H"""
+    <a phx-click="sort" phx-value-order={@sort_order} phx-value-by={@col} class="inline-flex cursor-pointer group">
+        <%= @label %>
+      <span class="flex-none px-1 ml-2 text-gray-300 bg-gray-700 rounded group-hover:bg-gray-600">
+        <.indicator col={@col} sort_order={@sort_order} sort_by={@sort_by} />
+      </span>
+    </a>
+    """
+  end
+
+  defp indicator(%{col: col, sort_by: sort_by, sort_order: :asc} = assigns) when col == sort_by do
+    ~H"""
+    <.icon name="hero-chevron-up-solid" class="w-4 h-4" />
+    """
+  end
+
+  defp indicator(%{col: col, sort_by: sort_by, sort_order: :desc} = assigns) when col == sort_by do
+    ~H"""
+    <.icon name="hero-chevron-down-solid" class="w-4 h-4" />
+    """
+  end
+
+  defp indicator(assigns) do
+    ~H"""
+    <.icon name="hero-chevron-up-down-solid" class="w-4 h-4" />
+    """
+  end
+
+  defp get_opposite(:asc), do: :desc
+  defp get_opposite(:desc), do: :asc
 end
