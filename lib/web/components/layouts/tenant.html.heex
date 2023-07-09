@@ -8,7 +8,7 @@
             color={nil}
             size={nil}
             class="px-1 py-1"
-            phx_click={show_slideover(%JS{}, "slideover-left")}
+            phx-click={show_slideover("slideover-left")}
           >
             <span class="sr-only">Open navigation menu</span>
             <.icon name="hero-bars-3-solid" />
@@ -75,7 +75,7 @@
             color={nil}
             size={nil}
             class="px-1 py-1"
-            phx_click={show_slideover(%JS{}, "slideover-right")}
+            phx-click={show_slideover("slideover-right")}
           >
             <.icon name="hero-user-solid" />
           </.button>
@@ -98,12 +98,27 @@
   </main>
 
   <.slideover id="slideover-left" direction="left">
-    <:slideover_header></:slideover_header>
+    <:slideover_header>
+    </:slideover_header>
     <:slideover_content></:slideover_content>
   </.slideover>
 
   <.slideover id="slideover-right" direction="right">
-    <:slideover_header></:slideover_header>
-    <:slideover_content></:slideover_content>
+    <:slideover_header>
+        <div class="flex items-center flex-shrink-0">
+          <div>
+            <img class="inline-block rounded-full h-9 w-9" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-300">Tom Cook</p>
+            <p class="text-xs font-medium text-gray-500">View profile</p>
+          </div>
+        </div>
+    </:slideover_header>
+    <:slideover_content>
+      <div class="text-gray-300 border-t border-zinc-700 py-2.5">
+        <.menu_link>Content</.menu_link>
+      </div>
+    </:slideover_content>
   </.slideover>
 </div>

@@ -35,6 +35,8 @@ defmodule Web.Components.Data do
     attr :align, :atom
   end
 
+  slot :inner_block
+
   slot :action, doc: "the slot for showing user actions in the last table column"
 
   def table(assigns) do
@@ -71,6 +73,7 @@ defmodule Web.Components.Data do
         phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
         class="relative border-t divide-y divide-zinc-800 border-zinc-800 text-zinc-300"
       >
+        <%= render_slot(@inner_block) %>
         <tr
           :for={{dom_id, _} = row <- @rows}
           role="row"
@@ -94,12 +97,12 @@ defmodule Web.Components.Data do
             <td class="relative hidden w-8 sm:table-cell" role="cell">
               <div
                 class={[
-                  "pl-4 py-1 text-right whitespace-nowrap opacity-0 group-hover:opacity-100 peer",
+                  "pl-4 py-1 text-right whitespace-nowrap peer",
                   @row_click && "group-hover:cursor-pointer"
                 ]}
                 phx-click={@row_click && @row_click.(row)}
               >
-                <input type="checkbox" class="flex flex-shrink-0 w-4 h-4" />
+                <input type="checkbox" name={"#{dom_id}-selected"} class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
               </div>
             </td>
           <% end %>
@@ -118,7 +121,6 @@ defmodule Web.Components.Data do
               <p :if={col[:data_label]} class="inline-block mr-2 font-semibold sm:hidden">
                 <%= col[:data_label] %>:
               </p>
-              <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
               <span class={[
                 "relative inline-block w-28 sm:w-full",
                 i == 0 && "font-semibold text-zinc-300"

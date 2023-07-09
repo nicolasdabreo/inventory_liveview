@@ -672,8 +672,8 @@ defmodule Web.Components.Core do
 
   attr :id, :string
   slot :inner_block
-  slot :aside_header
-  slot :aside_content
+  slot :slideover_header
+  slot :slideover_content
 
   def slideover(assigns) do
     ~H"""
@@ -706,13 +706,13 @@ defmodule Web.Components.Core do
       >
         <div class="w-screen h-full max-w-xs">
           <div class={[
-            "flex flex-col h-full py-2.5 overflow-y-auto shadow-xl border-zinc-300 px-8 bg-zinc-900",
+            "flex flex-col h-full py-2.5 px-4 overflow-y-auto shadow-xl border-zinc-300 bg-zinc-900",
             @direction == "right" && "rounded-l-xl",
             @direction == "left" && "rounded-r-xl"
           ]}>
             <div class="flex items-start justify-between pt-2 pb-4">
-              <h2 class="text-lg uppercase text-zinc-900 font-base">
-                <%= render_slot(@aside_header) %>
+              <h2 class="text-lg text-zinc-900 font-base">
+                <%= render_slot(@slideover_header) %>
               </h2>
 
               <div class="flex items-center h-7">
@@ -734,7 +734,7 @@ defmodule Web.Components.Core do
             <%= render_slot(@inner_block) %>
 
             <div id={"#{@id}-content"}>
-              <%= render_slot(@aside_content) %>
+              <%= render_slot(@slideover_content) %>
             </div>
           </div>
         </div>
@@ -803,7 +803,7 @@ defmodule Web.Components.Core do
     |> JS.show(to: "##{id}")
     |> JS.show(to: "##{id}-overlay")
     |> JS.set_attribute({"aria-hidden", false}, to: "##{id}")
-    |> JS.set_attribute({"aria-hidden", false}, to: "#{id}-overlay")
+    |> JS.set_attribute({"aria-hidden", false}, to: "##{id}-overlay")
     |> JS.focus_first(to: "##{id}-content")
   end
 
@@ -812,7 +812,7 @@ defmodule Web.Components.Core do
     |> JS.hide(to: "##{id}")
     |> JS.hide(to: "##{id}-overlay")
     |> JS.set_attribute({"aria-hidden", true}, to: "##{id}")
-    |> JS.set_attribute({"aria-hidden", true}, to: "#{id}-overlay")
+    |> JS.set_attribute({"aria-hidden", true}, to: "##{id}-overlay")
     |> JS.pop_focus()
   end
 end
