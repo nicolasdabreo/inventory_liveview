@@ -118,7 +118,7 @@ defmodule Web.Pages.InventoryLive.Index do
           <.link
             patch={~p"/inventory/products"}
             class={[
-              "relative inline-flex items-center px-4 py-1 -ml-px text-xs rounded-l-md text-zinc-300 hover:text-zinc-100",
+              "relative inline-flex items-center px-4 py-1 -ml-px text-sm rounded-l-md text-zinc-300 hover:text-zinc-100",
               (@live_action == :products && "bg-zinc-700") || "bg-zinc-800"
             ]}
           >
@@ -127,7 +127,7 @@ defmodule Web.Pages.InventoryLive.Index do
           <.link
             patch={~p"/inventory/materials"}
             class={[
-              "relative inline-flex items-center px-4 py-1 -ml-px text-xs border-l border-zinc-600 text-zinc-300 hover:text-zinc-100",
+              "relative inline-flex items-center px-4 py-1 -ml-px text-sm border-l border-zinc-600 text-zinc-300 hover:text-zinc-100",
               (@live_action == :materials && "bg-zinc-700") || "bg-zinc-800"
             ]}
           >
@@ -136,7 +136,7 @@ defmodule Web.Pages.InventoryLive.Index do
           <.link
             patch={~p"/inventory/supplies"}
             class={[
-              "rounded-r-md relative inline-flex items-center px-4 py-1 text-xs border-l border-zinc-600 text-zinc-300 hover:text-zinc-100",
+              "rounded-r-md relative inline-flex items-center px-4 py-1 text-sm border-l border-zinc-600 text-zinc-300 hover:text-zinc-100",
               (@live_action == :supplies && "bg-zinc-700") || "bg-zinc-800"
             ]}
           >
@@ -151,7 +151,7 @@ defmodule Web.Pages.InventoryLive.Index do
                 phx-click={toggle_menu.()}
                 type="button"
                 aria-haspopup="true"
-                class="relative inline-flex items-center h-full px-4 py-1 text-xs border rounded bg-zinc-700 text-zinc-300 hover:text-zinc-100 border-zinc-500 hover:border-zinc-400"
+                class="relative inline-flex items-center h-full px-4 py-1 text-sm border rounded bg-zinc-700 text-zinc-300 hover:text-zinc-100 border-zinc-500 hover:border-zinc-400"
               >
                 <%= case @live_action do %>
                   <% :products -> %>
@@ -263,7 +263,7 @@ defmodule Web.Pages.InventoryLive.Index do
       <.table
         id="all-inventory-table"
         rows={@streams.inventory}
-        class="text-sm text-zinc-300"
+        class="text-zinc-300"
         row_class="grid grid-cols-1 sm:table-row p-4"
       >
         <:col
@@ -272,7 +272,7 @@ defmodule Web.Pages.InventoryLive.Index do
           label={sortable_link("Name", :name, @options)}
         >
           <%= item.name %>
-          <p class="text-xs text-zinc-500"><%= item.category || "Placeholder" %></p>
+          <p class="text-sm text-zinc-500"><%= item.category || "Placeholder" %></p>
         </:col>
         <:col
           :let={{_id, item}}
@@ -281,7 +281,9 @@ defmodule Web.Pages.InventoryLive.Index do
           align={:right}
           label={sortable_link("Price per unit", :unit_price, @options)}
         >
-          £<%= item.unit_price %>
+        <div class="flex flex-row justify-end gap-2">
+          <p class="flex-1 text-right truncate"><%= item.unit_price %></p><p class="w-4 text-left text-zinc-500">GBP</p>
+        </div>
         </:col>
         <:col
           :let={{_id, item}}
@@ -290,7 +292,9 @@ defmodule Web.Pages.InventoryLive.Index do
           align={:right}
           label={sortable_link("In stock", :quantity_in_stock, @options)}
         >
-          <%= item.quantity_in_stock %><%= item.unit_of_measurement %>
+          <div class="flex flex-row justify-end gap-2">
+            <p class="flex-1 text-right truncate"><%= item.quantity_in_stock %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+          </div>
         </:col>
         <:col
           :let={{_id, item}}
@@ -299,7 +303,9 @@ defmodule Web.Pages.InventoryLive.Index do
           align={:right}
           label={sortable_link("Commited", :committed_stock, @options)}
         >
-          <%= item.committed_stock %><%= item.unit_of_measurement %>
+          <div class="flex flex-row justify-end gap-2">
+            <p class="flex-1 text-right truncate"><%= item.committed_stock %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+          </div>
         </:col>
         <:col
           :let={{_id, item}}
@@ -308,7 +314,9 @@ defmodule Web.Pages.InventoryLive.Index do
           align={:right}
           label="Reorder point"
         >
-          <%= item.reorder_point %><%= item.unit_of_measurement %>
+          <div class="flex flex-row justify-end gap-2">
+            <p class="flex-1 text-right truncate"><%= item.reorder_point %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+          </div>
         </:col>
         <:col
           :let={{_id, item}}
@@ -316,13 +324,15 @@ defmodule Web.Pages.InventoryLive.Index do
           align={:right}
           label="Diff"
         >
-          <%= if diff = Decimal.round(Inventory.calculate_stock_difference(item)) do %>
-            <%= if Decimal.negative?(diff) do %>
-              <p class="font-semibold text-red-600"><%= diff %><%= item.unit_of_measurement %></p>
-            <% else %>
-              <p class="font-semibold"><%= diff %><%= item.unit_of_measurement %></p>
+          <div class="flex flex-row justify-end gap-2">
+            <%= if diff = Decimal.round(Inventory.calculate_stock_difference(item)) do %>
+              <%= if Decimal.negative?(diff) do %>
+                <p class="flex-1 font-semibold text-right text-red-600 truncate"><%= diff %></p><p class="w-4 text-left"><%= item.unit_of_measurement %></p>
+              <% else %>
+               <p class="flex-1 font-semibold text-right truncate"><%= diff %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+              <% end %>
             <% end %>
-          <% end %>
+          </div>
         </:col>
       </.table>
     </div>

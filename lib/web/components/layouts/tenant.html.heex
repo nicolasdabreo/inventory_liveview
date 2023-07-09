@@ -21,7 +21,7 @@
             />
           </div>
           <div class="flex items-baseline space-x-4 flex-shrink-1">
-            <.breadcrumbs class="min-w-0 text-sm">
+            <.breadcrumbs class="min-w-0">
               <:link href={~p"/"}>Manufacturing</:link>
               <:link href={~p"/"}><%= @page_title %></:link>
             </.breadcrumbs>
@@ -48,7 +48,7 @@
               <input
                 id="search"
                 name="search"
-                class="block w-full py-1 pl-10 pr-3 text-gray-300 bg-transparent border border-gray-400 rounded-md placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                class="block w-full py-1 pl-10 pr-3 text-gray-300 bg-transparent border border-gray-400 rounded-md placeholder:text-gray-400 focus:ring-0 sm:leading-6"
                 placeholder="Search"
                 type="search"
               />

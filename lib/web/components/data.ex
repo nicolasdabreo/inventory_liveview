@@ -59,7 +59,7 @@ defmodule Web.Components.Data do
           >
             <%= col[:label] %>
           </th>
-          <th class="relative sticky top-0 z-10 hidden w-24 py-2 sm:table-cell" role="columnheader">
+          <th :if={@action != []} class="relative sticky top-0 z-10 hidden w-24 py-2 sm:table-cell" role="columnheader">
             <span class="sr-only"><%= gettext("Actions") %></span>
           </th>
           <th class="sticky top-0 z-10 hidden w-8 sm:table-cell" role="columnheader" />
@@ -69,7 +69,7 @@ defmodule Web.Components.Data do
         id={@id}
         role="rowgroup"
         phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-        class="relative text-sm border-t divide-y divide-zinc-800 border-zinc-800 text-zinc-300"
+        class="relative border-t divide-y divide-zinc-800 border-zinc-800 text-zinc-300"
       >
         <tr
           :for={{dom_id, _} = row <- @rows}
@@ -120,15 +120,15 @@ defmodule Web.Components.Data do
               </p>
               <span class="absolute right-0 -inset-y-px -left-4 sm:rounded-l-xl" />
               <span class={[
-                "relative inline-block w-28 sm:w-auto",
+                "relative inline-block w-28 sm:w-full",
                 i == 0 && "font-semibold text-zinc-300"
               ]}>
                 <%= render_slot(col, @row_item.(row)) %>
               </span>
             </div>
           </td>
-          <td class="hidden w-24 sm:table-cell" role="cell" class="relative px-3">
-            <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
+          <td :if={@action != []} class="hidden w-24 sm:table-cell" role="cell" class="relative px-3">
+            <div class="relative py-4 font-medium text-right whitespace-nowrap">
               <span class="absolute left-0 -inset-y-px -right-4 sm:rounded-r-xl" />
               <span
                 :for={action <- @action}
@@ -167,7 +167,7 @@ defmodule Web.Components.Data do
     ~H"""
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm sm:gap-8">
+        <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
           <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
           <dd class="text-zinc-700"><%= render_slot(item) %></dd>
         </div>
