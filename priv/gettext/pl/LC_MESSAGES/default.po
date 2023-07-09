@@ -1,100 +1,22 @@
 ## "msgid"s in this file come from POT (.pot) files.
-##
-## Do not add, change, or remove "msgid"s manually here as
-## they're tied to the ones in the corresponding POT file
-## (with the same domain).
-##
-## Use "mix gettext.extract --merge" or "mix gettext.merge"
-## to merge POT files into PO files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
 msgid ""
 msgstr ""
 "Language: pl\n"
-"Plural-Forms: nplurals=3\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10||n%100>=20) ? 1 : 2);\n"
 
+#: lib/web/components/data.ex:55
 #, elixir-autogen, elixir-format
-#: lib/admin/pages/customers_live/index.ex:20
-msgid "Customers"
-msgstr "Klienci"
+msgid "Actions"
+msgstr ""
 
+#: lib/web/components/core.ex:350
 #, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:70
-msgid "0 in stock for 0 variant(s)"
-msgstr "0 w magazynie dla 0 wariantów"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/form.ex:27
-msgid "Add Product"
-msgstr "Dodaj produkt"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:33
-msgid "Categories"
-msgstr "Kategorie"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:57
-msgid "Category"
-msgstr "Kategoria"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:34
-msgid "Collections"
-msgstr "Kolekcje"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/customers_live/index.ex:22
-msgid "Date Added"
-msgstr "Data dodania"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:66
-msgid "Draft"
-msgstr "Projekt"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/customers_live/index.ex:24
-msgid "Email"
-msgstr "E-mail"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/form.ex:36
-#: lib/admin/pages/products_live/form.ex:37
-msgid "General"
-msgstr "Ogólny"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:69
-msgid "Inventory"
-msgstr "Spis"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:51
-msgid "Name"
-msgstr "Nazwa"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:47
-msgid "New Product"
-msgstr "Nowy produkt"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/customers_live/index.ex:26
-msgid "Orders"
-msgstr "Zamówienia"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/form.ex:26
-#: lib/admin/pages/products_live/index.ex:28
-#: lib/admin/pages/products_live/index.ex:32
-msgid "Products"
-msgstr "Produkty"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:63
-msgid "Published"
-msgstr "Opublikowany"
-
-#, elixir-autogen, elixir-format
-#: lib/admin/pages/products_live/index.ex:59
-msgid "Status"
-msgstr "Status"
+msgid "close"
+msgstr ""

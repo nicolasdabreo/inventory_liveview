@@ -10,8 +10,16 @@ defmodule Web.Pages.InventoryLive.Index do
   defp assign_tabs(socket) do
     assign(socket, :tabs, [
       %{navigate: "/sales", text: "Sales", selected: socket.assigns.active_path =~ "/sales"},
-      %{navigate: "/planning", text: "Planning", selected: socket.assigns.active_path =~ "/planning"},
-      %{navigate: "/inventory/all", text: "Inventory", selected: socket.assigns.active_path =~ "/inventory"}
+      %{
+        navigate: "/planning",
+        text: "Planning",
+        selected: socket.assigns.active_path =~ "/planning"
+      },
+      %{
+        navigate: "/inventory/products",
+        text: "Inventory",
+        selected: socket.assigns.active_path =~ "/inventory"
+      }
     ])
   end
 
@@ -34,6 +42,7 @@ defmodule Web.Pages.InventoryLive.Index do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     filter = %{name: ""}
+
     options = %{
       sort_order: :asc,
       sort_by: :name
@@ -50,19 +59,19 @@ defmodule Web.Pages.InventoryLive.Index do
         stream(socket, :inventory, [])
       end
 
-      {:ok,
-        socket
-        |> assign(:page_title, "Inventory")
-        |> assign(:options, options)
-        |> assign(:filter, filter)}
+    {:ok,
+     socket
+     |> assign(:page_title, "Inventory")
+     |> assign(:options, options)
+     |> assign(:filter, filter)}
   end
 
   @impl Phoenix.LiveView
-  def handle_params(params, uri, socket) do
+  def handle_params(params, _uri, socket) do
     {:noreply,
-      socket
-      |> assign_tabs()
-      |> apply_action(socket.assigns.live_action, params)}
+     socket
+     |> assign_tabs()
+     |> apply_action(socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"item_id" => id}) do
@@ -72,7 +81,7 @@ defmodule Web.Pages.InventoryLive.Index do
     |> assign(:item, item)
   end
 
-  defp apply_action(socket, action, _params) when action in [:all, :materials, :products] do
+  defp apply_action(socket, action, _params) when action in [:supplies, :materials, :products] do
     # Untrack when back on the list
     Presence.untrack(self(), @topic, socket.assigns.current_user.id)
 
@@ -85,7 +94,6 @@ defmodule Web.Pages.InventoryLive.Index do
     filter = %{name: params["name"]}
     {:noreply, assign_filter(socket, filter)}
   end
-
 
   def handle_event("sort", %{"order" => sort_order, "by" => sort_by}, socket) do
     options = %{
@@ -106,15 +114,15 @@ defmodule Web.Pages.InventoryLive.Index do
     ~H"""
     <span class="inline-flex justify-between w-full p-3 border-b shadow-sm border-zinc-600">
       <div class="inline-flex sm:space-x-4">
-        <div class="inline-flex">
+        <div class="hidden sm:inline-flex">
           <.link
-            patch={~p"/inventory/all"}
+            patch={~p"/inventory/products"}
             class={[
-              "relative inline-flex items-center px-4 py-1 text-xs text-zinc-300 rounded-l-md hover:text-zinc-100",
-              (@live_action == :all && "bg-zinc-700") || "bg-zinc-800"
+              "relative inline-flex items-center px-4 py-1 -ml-px text-xs rounded-l-md text-zinc-300 hover:text-zinc-100",
+              (@live_action == :products && "bg-zinc-700") || "bg-zinc-800"
             ]}
           >
-            All
+            Products
           </.link>
           <.link
             patch={~p"/inventory/materials"}
@@ -126,17 +134,47 @@ defmodule Web.Pages.InventoryLive.Index do
             Materials
           </.link>
           <.link
-            patch={~p"/inventory/products"}
+            patch={~p"/inventory/supplies"}
             class={[
-              "relative inline-flex items-center px-4 py-1 -ml-px text-xs border-l border-zinc-600 text-zinc-300 rounded-r-md hover:text-zinc-100",
-              (@live_action == :products && "bg-zinc-700") || "bg-zinc-800"
+              "rounded-r-md relative inline-flex items-center px-4 py-1 text-xs border-l border-zinc-600 text-zinc-300 hover:text-zinc-100",
+              (@live_action == :supplies && "bg-zinc-700") || "bg-zinc-800"
             ]}
           >
-            Products
+            Supplies
           </.link>
         </div>
+        <div class="relative inline-flex mr-2 sm:hidden">
+          <.menu id="inventory-nav-menu" placement="right">
+            <:trigger :let={{toggle_menu, button_id}}>
+              <button
+                id={button_id}
+                phx-click={toggle_menu.()}
+                type="button"
+                aria-haspopup="true"
+                class="relative inline-flex items-center h-full px-4 py-1 text-xs border rounded bg-zinc-700 text-zinc-300 hover:text-zinc-100 border-zinc-500 hover:border-zinc-400"
+              >
+                <%= case @live_action do %>
+                  <% :products -> %>
+                    Products
+                  <% :materials -> %>
+                    Materials
+                  <% :supplies -> %>
+                    Supplies
+                <% end %>
+                <.icon name="hero-chevron-down-solid" class="w-3 h-3 ml-2" />
+              </button>
+            </:trigger>
+            <:item></:item>
+            <:item><.divider /></:item>
+            <:item>
+              <.menu_link navigate={~p"/inventory/products"}>Products</.menu_link>
+              <.menu_link navigate={~p"/inventory/materials"}>Materials</.menu_link>
+              <.menu_link navigate={~p"/inventory/supplies"}>Supplies</.menu_link>
+            </:item>
+          </.menu>
+        </div>
 
-        <div class="relative w-48">
+        <div class="relative mr-2 sm:w-48">
           <.menu id="filter-inventory-menu" placement="right">
             <:trigger :let={{toggle_menu, button_id}}>
               <button
@@ -146,25 +184,38 @@ defmodule Web.Pages.InventoryLive.Index do
                 aria-haspopup="true"
                 class="relative inline-flex items-center h-full px-4 py-1 text-xs border border-dashed rounded text-zinc-300 hover:text-zinc-100 border-zinc-500 hover:border-zinc-400"
               >
-                <.icon name="hero-funnel-solid" class="flex-shrink-0 w-3 h-3 mr-2 text-white" /> Filter
+                <.icon name="hero-funnel-solid" class="flex-shrink-0 w-3 h-3 mr-2 text-white" />
+                Filter
               </button>
             </:trigger>
-            <:item>
-
-            </:item>
+            <:item></:item>
             <:item><.divider /></:item>
             <:item>
-              <.menu_link phx-click="filter" phx-value-name=""><.icon name="hero-magnifying-glass-solid" class="w-4 h-4 mr-3" />Name</.menu_link>
-              <.menu_link phx-click="filter" phx-value-sku=""><.icon name="hero-chart-bar-solid" class="w-4 h-4 mr-3" />SKU</.menu_link>
+              <.menu_link phx-click="filter" phx-value-name="">
+                <.icon name="hero-magnifying-glass-solid" class="w-4 h-4 mr-3" />Name
+              </.menu_link>
+              <.menu_link phx-click="filter" phx-value-sku="">
+                <.icon name="hero-chart-bar-solid" class="w-4 h-4 mr-3" />SKU
+              </.menu_link>
               <.menu_link><.icon name="hero-folder-solid" class="w-4 h-4 mr-3" />Category</.menu_link>
-              <.menu_link><.icon name="hero-building-office-solid" class="w-4 h-4 mr-3" />Supplier</.menu_link>
+              <.menu_link>
+                <.icon name="hero-building-office-solid" class="w-4 h-4 mr-3" />Supplier
+              </.menu_link>
             </:item>
             <:item><.divider /></:item>
             <:item>
-              <.menu_link><.icon name="hero-currency-dollar-solid" class="w-4 h-4 mr-3" />Price</.menu_link>
-              <.menu_link><.icon name="hero-square-3-stack-3d-solid" class="w-4 h-4 mr-3" />Quantity</.menu_link>
-              <.menu_link><.icon name="hero-calendar-solid" class="w-4 h-4 mr-3" />Created date</.menu_link>
-              <.menu_link><.icon name="hero-wrench-screwdriver-solid" class="w-4 h-4 mr-3" />Components</.menu_link>
+              <.menu_link>
+                <.icon name="hero-currency-dollar-solid" class="w-4 h-4 mr-3" />Price
+              </.menu_link>
+              <.menu_link>
+                <.icon name="hero-square-3-stack-3d-solid" class="w-4 h-4 mr-3" />Quantity
+              </.menu_link>
+              <.menu_link>
+                <.icon name="hero-calendar-solid" class="w-4 h-4 mr-3" />Created date
+              </.menu_link>
+              <.menu_link>
+                <.icon name="hero-wrench-screwdriver-solid" class="w-4 h-4 mr-3" />Components
+              </.menu_link>
             </:item>
           </.menu>
         </div>
@@ -209,16 +260,62 @@ defmodule Web.Pages.InventoryLive.Index do
     />
 
     <div class="mb-4 overflow-x-auto overflow-y-hidden">
-      <.table id="all-inventory-table" rows={@streams.inventory} loading={not connected?(@socket)} class="text-sm text-zinc-300" row_class="grid grid-cols-1 sm:table-row p-4">
-        <:col class="w-48 col-span-2" :let={{_id, item}} label={sortable_link("Name", :name, @options)}>
+      <.table
+        id="all-inventory-table"
+        rows={@streams.inventory}
+        class="text-sm text-zinc-300"
+        row_class="grid grid-cols-1 sm:table-row p-4"
+      >
+        <:col
+          :let={{_id, item}}
+          class="w-48 col-span-2"
+          label={sortable_link("Name", :name, @options)}
+        >
           <%= item.name %>
           <p class="text-xs text-zinc-500"><%= item.category || "Placeholder" %></p>
         </:col>
-        <:col data_label="Price per unit" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label={sortable_link("Price per unit", :unit_price, @options)}>£<%= item.unit_price %></:col>
-        <:col data_label="In stock" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label={sortable_link("In stock", :quantity_in_stock, @options)}><%= item.quantity_in_stock %><%= item.unit_of_measurement %></:col>
-        <:col data_label="Committed" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label={sortable_link("Commited", :committed_stock, @options)}><%= item.committed_stock %><%= item.unit_of_measurement %></:col>
-        <:col data_label="Reorder point" class="w-full sm:w-36 col-start-1" align={:right} :let={{_id, item}} label="Reorder point"><%= item.reorder_point %><%= item.unit_of_measurement %></:col>
-        <:col class="border-t border-zinc-500 sm:border-none mt-1 pt-1 w-full sm:w-24 col-start-1" align={:right} :let={{_id, item}} label="Diff">
+        <:col
+          :let={{_id, item}}
+          data_label="Price per unit"
+          class="w-full col-start-1 sm:w-36"
+          align={:right}
+          label={sortable_link("Price per unit", :unit_price, @options)}
+        >
+          £<%= item.unit_price %>
+        </:col>
+        <:col
+          :let={{_id, item}}
+          data_label="In stock"
+          class="w-full col-start-1 sm:w-36"
+          align={:right}
+          label={sortable_link("In stock", :quantity_in_stock, @options)}
+        >
+          <%= item.quantity_in_stock %><%= item.unit_of_measurement %>
+        </:col>
+        <:col
+          :let={{_id, item}}
+          data_label="Committed"
+          class="w-full col-start-1 sm:w-36"
+          align={:right}
+          label={sortable_link("Commited", :committed_stock, @options)}
+        >
+          <%= item.committed_stock %><%= item.unit_of_measurement %>
+        </:col>
+        <:col
+          :let={{_id, item}}
+          data_label="Reorder point"
+          class="w-full col-start-1 sm:w-36"
+          align={:right}
+          label="Reorder point"
+        >
+          <%= item.reorder_point %><%= item.unit_of_measurement %>
+        </:col>
+        <:col
+          :let={{_id, item}}
+          class="w-full col-start-1 pt-1 mt-1 border-t border-zinc-500 sm:border-none sm:w-24"
+          align={:right}
+          label="Diff"
+        >
           <%= if diff = Decimal.round(Inventory.calculate_stock_difference(item)) do %>
             <%= if Decimal.negative?(diff) do %>
               <p class="font-semibold text-red-600"><%= diff %><%= item.unit_of_measurement %></p>
@@ -241,8 +338,13 @@ defmodule Web.Pages.InventoryLive.Index do
     }
 
     ~H"""
-    <a phx-click="sort" phx-value-order={@sort_order} phx-value-by={@col} class="inline-flex cursor-pointer group">
-        <%= @label %>
+    <a
+      phx-click="sort"
+      phx-value-order={@sort_order}
+      phx-value-by={@col}
+      class="inline-flex cursor-pointer group"
+    >
+      <%= @label %>
       <span class="flex-none px-1 ml-2 text-gray-300 bg-gray-700 rounded group-hover:bg-gray-600">
         <.indicator col={@col} sort_order={@sort_order} sort_by={@sort_by} />
       </span>
@@ -256,7 +358,8 @@ defmodule Web.Pages.InventoryLive.Index do
     """
   end
 
-  defp indicator(%{col: col, sort_by: sort_by, sort_order: :desc} = assigns) when col == sort_by do
+  defp indicator(%{col: col, sort_by: sort_by, sort_order: :desc} = assigns)
+       when col == sort_by do
     ~H"""
     <.icon name="hero-chevron-down-solid" class="w-4 h-4" />
     """

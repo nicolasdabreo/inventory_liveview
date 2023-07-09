@@ -335,7 +335,7 @@ defmodule Web.Components.Core do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "fixed bottom-5 left-5 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
+        "rounded-lg p-3 ring-1",
         @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
         @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
       ]}
@@ -377,15 +377,17 @@ defmodule Web.Components.Core do
 
   """
   attr(:menu_items_wrapper_class, :string,
-  default: "",
-  doc: "any extra CSS class for menu item wrapper container"
-)
+    default: "",
+    doc: "any extra CSS class for menu item wrapper container"
+  )
+
   attr(:class, :string, default: "")
   attr(:id, :string, required: true)
   attr(:rest, :global)
   attr(:placement, :string, default: "left", values: ["left", "right"])
 
   slot(:trigger)
+
   slot :item do
     attr(:role, :string)
   end
@@ -398,7 +400,8 @@ defmodule Web.Components.Core do
 
         <div
           id={@id}
-          class={[placement_class(@placement),
+          class={[
+            placement_class(@placement),
             "absolute z-50 mt-2 w-full hidden border border-zinc-700
               bottom-auto transform inset-x-0
               bg-zinc-800 rounded-lg shadow-lg ring-1 min-w-max
@@ -503,7 +506,11 @@ defmodule Web.Components.Core do
           phx-change={JS.dispatch("js:tab-selected", detail: %{id: "#{@id}-mobile"})}
           class="block w-full py-2 pl-3 pr-10 text-base rounded-md border-zinc-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
         >
-          <option :for={{tab, i} <- Enum.with_index(@tab)} value={"#{@id}-#{i}"} selected={tab.selected}>
+          <option
+            :for={{tab, i} <- Enum.with_index(@tab)}
+            value={"#{@id}-#{i}"}
+            selected={tab.selected}
+          >
             <%= render_slot(tab) %>
           </option>
         </select>

@@ -213,5 +213,5 @@ defmodule Web.Authenticate do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/inventory/all"
+  defp signed_in_path(_conn), do: ~p"/inventory/products"
 end

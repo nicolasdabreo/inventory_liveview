@@ -10,7 +10,7 @@ defmodule Web.Pages.InventoryLive.EditComponent do
         :if={@live_action in [:edit]}
         show
         id={"#{@live_action}-modal"}
-        on_cancel={JS.patch(~p"/inventory/all")}
+        on_cancel={JS.patch(~p"/inventory/products")}
         on_confirm={JS.exec("phx-submit")}
       >
         <h2 class="mb-2">Edit <%= @item.name %></h2>
@@ -43,13 +43,13 @@ defmodule Web.Pages.InventoryLive.EditComponent do
      |> assign_form(changeset)}
   end
 
-  def handle_event("validate", %{"form" => params}, socket) do
+  def handle_event("validate", %{"form" => _params}, socket) do
     changeset = Inventory.change_inventory_item(socket.assigns.item, %{})
 
     {:noreply, assign_form(socket, changeset)}
   end
 
-  def handle_event("save", %{"form" => params}, socket) do
+  def handle_event("save", %{"form" => _params}, socket) do
     {:noreply, socket}
   end
 

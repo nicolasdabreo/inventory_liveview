@@ -50,17 +50,19 @@ defmodule Web.Components.Layouts do
 
   def flash_group(assigns) do
     ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
-    <.flash
-      id="disconnected"
-      kind={:error}
-      phx-disconnected={show("#disconnected")}
-      phx-connected={hide("#disconnected")}
-      hidden
-    >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
-    </.flash>
+    <div class="fixed z-50 flex flex-col gap-3 bottom-5 left-5 w-80 sm:w-96">
+      <.flash kind={:info} title="Success!" flash={@flash} />
+      <.flash kind={:error} title="Error!" flash={@flash} />
+      <.flash
+        id="disconnected"
+        kind={:error}
+        phx-disconnected={show("#disconnected")}
+        phx-connected={hide("#disconnected")}
+        hidden
+      >
+        Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
+      </.flash>
+    </div>
     """
   end
 end
