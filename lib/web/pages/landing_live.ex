@@ -65,7 +65,7 @@ defmodule Web.Pages.LandingLive do
                 Get started <span class="hidden lg:inline">today</span>
               </span>
             </.button>
-            <.link class="flex inline-flex items-center justify-center p-2 text-gray-700 rounded-md lg:hidden hover:text-violet-500">
+            <.link class="flex inline-flex items-center justify-center p-2 text-zinc-700 rounded-md lg:hidden hover:text-violet-500">
               <span class="sr-only">Open main menu</span>
               <.icon name="hero-bars-3-solid" class="h-7 w-7" />
             </.link>

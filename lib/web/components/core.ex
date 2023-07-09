@@ -282,7 +282,7 @@ defmodule Web.Components.Core do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden p-8 transition shadow-lg bg-zinc-900 text-zinc-100 ring-zinc-700/10 rounded-2xl sm:p-12 ring-1"
+              class="relative hidden p-8 transition shadow-lg text-zinc-100 bg-zinc-900 ring-zinc-700/10 rounded-2xl sm:p-12 ring-1"
             >
               <div class="absolute top-6 right-5">
                 <.button
@@ -427,7 +427,7 @@ defmodule Web.Components.Core do
   end
 
   # .pc-dropdown__menu-items-wrapper {
-  #   @apply absolute z-30 w-56 mt-2 bg-white rounded-md shadow-lg dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none;
+  #   @apply absolute z-30 w-56 mt-2 bg-white rounded-md shadow-lg dark:bg-zinc-800 ring-1 ring-black ring-opacity-5 focus:outline-none;
   # }
   # .pc-dropdown__menu-items-wrapper-placement--left {
   #   @apply right-0 origin-top-right;
@@ -593,7 +593,7 @@ defmodule Web.Components.Core do
     <nav aria-label="Breadcrumb" {@rest}>
       <.link
         navigate={Enum.at(@link, @last)}
-        class="flex no-underline truncate flex-shrink-1 sm:hidden text-zinc-400 hover:text-zinc-300"
+        class="flex no-underline truncate text-zinc-400 flex-shrink-1 sm:hidden hover:text-zinc-300"
       >
         <%= render_slot(Enum.at(@link, @last)) %>
       </.link>
@@ -715,7 +715,7 @@ defmodule Web.Components.Core do
                 <%= render_slot(@slideover_header) %>
               </h2>
 
-              <div class="flex items-center h-7">
+              <div class="flex items-center pr-4 h-7">
                 <.button
                   type="button"
                   phx-click={hide_slideover(@id)}

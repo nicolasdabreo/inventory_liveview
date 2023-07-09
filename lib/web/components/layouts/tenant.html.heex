@@ -33,7 +33,7 @@
             <div class="relative">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
-                  class="w-5 h-5 text-gray-400"
+                  class="w-5 h-5 text-zinc-400"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                   aria-hidden="true"
@@ -48,12 +48,12 @@
               <input
                 id="search"
                 name="search"
-                class="block w-full py-1 pl-10 pr-3 text-gray-300 bg-transparent border border-gray-400 rounded-md placeholder:text-gray-400 focus:ring-0 sm:leading-6"
+                class="block w-full py-1 pl-10 pr-3 bg-transparent border rounded-md text-zinc-300 border-zinc-400 placeholder:text-zinc-400 focus:ring-0 sm:leading-6"
                 placeholder="Search"
                 type="search"
               />
               <div class="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                <kbd class="inline-flex items-center px-1 font-sans text-xs text-gray-400 border border-gray-400 rounded">
+                <kbd class="inline-flex items-center px-1 font-sans text-xs border rounded text-zinc-400 border-zinc-400">
                   ⌘K
                 </kbd>
               </div>
@@ -105,19 +105,27 @@
 
   <.slideover id="slideover-right" direction="right">
     <:slideover_header>
-        <div class="flex items-center flex-shrink-0">
-          <div>
-            <img class="inline-block rounded-full h-9 w-9" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-          </div>
-          <div class="ml-3">
-            <p class="text-sm font-medium text-gray-300">Tom Cook</p>
-            <p class="text-xs font-medium text-gray-500">View profile</p>
-          </div>
+      <div class="flex items-center flex-shrink-0">
+        <div>
+          <img class="inline-block rounded-full h-9 w-9" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
         </div>
+        <div class="ml-3">
+          <p class="text-sm font-medium truncate text-zinc-300">Tom Cook</p>
+          <p class="text-xs font-medium truncate text-zinc-500">email@email.com</p>
+        </div>
+      </div>
     </:slideover_header>
     <:slideover_content>
-      <div class="text-gray-300 border-t border-zinc-700 py-2.5">
-        <.menu_link>Content</.menu_link>
+      <div class="text-zinc-300 border-t border-zinc-700 py-2.5">
+        <.menu_link class="py-2.5"><.icon name="hero-user-solid" class="mr-2" /> View profile</.menu_link>
+        <.menu_link class="py-2.5"><.icon name="hero-cog-solid" class="mr-2" /> Account settings</.menu_link>
+      </div>
+      <div class="text-zinc-300 border-t border-zinc-700 py-2.5">
+        <.menu_link class="py-2.5"><.icon name="hero-book-open-solid" class="mr-2" /> User guides</.menu_link>
+        <.menu_link class="py-2.5"><.icon name="hero-users-solid" class="mr-2" /> Get support</.menu_link>
+      </div>
+      <div class="text-zinc-300 border-t border-zinc-700 py-2.5">
+        <.menu_link class="py-2.5"><.icon name="hero-arrow-right-on-rectangle-solid" class="mr-2" /> Log out</.menu_link>
       </div>
     </:slideover_content>
   </.slideover>

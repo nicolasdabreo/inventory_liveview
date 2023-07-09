@@ -151,7 +151,7 @@ defmodule Web.Pages.InventoryLive.Index do
                 phx-click={toggle_menu.()}
                 type="button"
                 aria-haspopup="true"
-                class="relative inline-flex items-center h-full px-4 py-1 text-sm border rounded bg-zinc-700 text-zinc-300 hover:text-zinc-100 border-zinc-500 hover:border-zinc-400"
+                class="relative inline-flex items-center h-full px-4 py-1 text-sm border rounded text-zinc-300 bg-zinc-700 border-zinc-500 hover:text-zinc-100 hover:border-zinc-400"
               >
                 <%= case @live_action do %>
                   <% :products -> %>
@@ -182,7 +182,7 @@ defmodule Web.Pages.InventoryLive.Index do
                 phx-click={toggle_menu.()}
                 type="button"
                 aria-haspopup="true"
-                class="relative inline-flex items-center h-full px-4 py-1 text-xs border border-dashed rounded text-zinc-300 hover:text-zinc-100 border-zinc-500 hover:border-zinc-400"
+                class="relative inline-flex items-center h-full px-4 py-1 text-xs border border-dashed rounded text-zinc-300 border-zinc-500 hover:text-zinc-100 hover:border-zinc-400"
               >
                 <.icon name="hero-funnel-solid" class="flex-shrink-0 w-3 h-3 mr-2 text-white" />
                 Filter
@@ -282,7 +282,7 @@ defmodule Web.Pages.InventoryLive.Index do
           label={sortable_link("Price per unit", :unit_price, @options)}
         >
         <div class="flex flex-row justify-end gap-2">
-          <p class="flex-1 text-right truncate"><%= item.unit_price %></p><p class="w-4 text-left text-zinc-500">GBP</p>
+          <p class="flex-1 text-right truncate"><%= item.unit_price %></p><p class="w-8 text-left text-zinc-500">GBP</p>
         </div>
         </:col>
         <:col
@@ -293,7 +293,7 @@ defmodule Web.Pages.InventoryLive.Index do
           label={sortable_link("In stock", :quantity_in_stock, @options)}
         >
           <div class="flex flex-row justify-end gap-2">
-            <p class="flex-1 text-right truncate"><%= item.quantity_in_stock %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+            <p class="flex-1 text-right truncate"><%= item.quantity_in_stock %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
           </div>
         </:col>
         <:col
@@ -304,7 +304,7 @@ defmodule Web.Pages.InventoryLive.Index do
           label={sortable_link("Commited", :committed_stock, @options)}
         >
           <div class="flex flex-row justify-end gap-2">
-            <p class="flex-1 text-right truncate"><%= item.committed_stock %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+            <p class="flex-1 text-right truncate"><%= item.committed_stock %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
           </div>
         </:col>
         <:col
@@ -315,7 +315,7 @@ defmodule Web.Pages.InventoryLive.Index do
           label="Reorder point"
         >
           <div class="flex flex-row justify-end gap-2">
-            <p class="flex-1 text-right truncate"><%= item.reorder_point %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+            <p class="flex-1 text-right truncate"><%= item.reorder_point %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
           </div>
         </:col>
         <:col
@@ -327,9 +327,9 @@ defmodule Web.Pages.InventoryLive.Index do
           <div class="flex flex-row justify-end gap-2">
             <%= if diff = Decimal.round(Inventory.calculate_stock_difference(item)) do %>
               <%= if Decimal.negative?(diff) do %>
-                <p class="flex-1 font-semibold text-right text-red-600 truncate"><%= diff %></p><p class="w-4 text-left"><%= item.unit_of_measurement %></p>
+                <p class="flex-1 font-semibold text-right text-red-600 truncate"><%= diff %></p><p class="w-8 text-left"><%= item.unit_of_measurement %></p>
               <% else %>
-               <p class="flex-1 font-semibold text-right truncate"><%= diff %></p><p class="w-4 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
+               <p class="flex-1 font-semibold text-right truncate"><%= diff %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
               <% end %>
             <% end %>
           </div>
@@ -352,10 +352,10 @@ defmodule Web.Pages.InventoryLive.Index do
       phx-click="sort"
       phx-value-order={@sort_order}
       phx-value-by={@col}
-      class="inline-flex cursor-pointer group"
+      class="inline-flex text-base cursor-pointer group"
     >
       <%= @label %>
-      <span class="flex-none px-1 ml-2 text-gray-300 bg-gray-700 rounded group-hover:bg-gray-600">
+      <span class="flex items-center px-1 ml-2 text-zinc-300">
         <.indicator col={@col} sort_order={@sort_order} sort_by={@sort_by} />
       </span>
     </a>

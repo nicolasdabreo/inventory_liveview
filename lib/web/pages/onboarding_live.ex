@@ -54,7 +54,7 @@ defmodule Web.Pages.OnboardingLive do
             </.button>
           </:actions>
           <:actions>
-            <.link class="flex items-center text-sm font-normal text-gray-500">
+            <.link class="flex items-center text-sm font-normal text-zinc-500">
               Skip <span class="ml-2" aria-hidden="true">→</span>
             </.link>
           </:actions>
