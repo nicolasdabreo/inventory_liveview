@@ -23,6 +23,7 @@ defmodule Web.Components.Data do
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
   attr :row_class, :string, default: ""
+  attr :sticky, :boolean, default: true
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -46,25 +47,25 @@ defmodule Web.Components.Data do
       end
 
     ~H"""
-    <table role="table" class={["overflow-x-auto w-full table-fixed", @class]}>
-      <thead role="rowgroup" class="sticky text-left text-[0.8125rem] text-zinc-300 bg-zinc-800 pt-4">
+    <table role="table" class={["w-full table-fixed", @class]}>
+      <thead class={["text-left text-[0.8125rem] text-zinc-300 pt-4 bg-zinc-800", @sticky && "sticky top-14 z-10"]} role="rowgroup">
         <tr role="row">
-          <th class="sticky top-0 z-10 hidden w-8 sm:table-cell" role="columnheader" />
+          <th class="hidden w-8 sm:table-cell" role="columnheader" />
           <th
             :for={col <- @col}
             role="columnheader"
             class={[
-              "sticky top-0 z-10 hidden sm:table-cell py-2 px-2 font-normal",
+              "hidden sm:table-cell py-2 px-2 font-normal",
               col[:class],
               text_align_classes(col[:align])
             ]}
           >
             <%= col[:label] %>
           </th>
-          <th :if={@action != []} class="relative sticky top-0 z-10 hidden w-24 py-2 sm:table-cell" role="columnheader">
+          <th :if={@action != []} class="relative hidden w-24 py-2 sm:table-cell" role="columnheader">
             <span class="sr-only"><%= gettext("Actions") %></span>
           </th>
-          <th class="sticky top-0 z-10 hidden w-8 sm:table-cell" role="columnheader" />
+          <th class="hidden w-8 sm:table-cell" role="columnheader" />
         </tr>
       </thead>
       <tbody

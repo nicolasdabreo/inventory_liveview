@@ -24,18 +24,18 @@ defmodule Web.Pages.InventoryLive.Index do
   end
 
   defp assign_filter(socket, filter) do
-    inventory = Inventory.list_inventory()
+    inventory = Inventory.list_inventory(filter: filter, sort: socket.assigns.sort)
 
     socket
     |> assign(filter: filter)
     |> stream(:inventory, inventory, reset: true)
   end
 
-  defp assign_sorting_options(socket, options) do
-    inventory = Inventory.list_inventory()
+  defp assign_sort(socket, sort) do
+    inventory = Inventory.list_inventory(sort: sort, filter: socket.assigns.filter)
 
     socket
-    |> assign(options: options)
+    |> assign(sort: sort)
     |> stream(:inventory, inventory, reset: true)
   end
 
@@ -43,7 +43,7 @@ defmodule Web.Pages.InventoryLive.Index do
   def mount(_params, _session, socket) do
     filter = %{name: ""}
 
-    options = %{
+    sort = %{
       sort_order: :asc,
       sort_by: :name
     }
@@ -51,7 +51,7 @@ defmodule Web.Pages.InventoryLive.Index do
     socket =
       if connected?(socket) do
         Endpoint.subscribe(@topic)
-        inventory = Inventory.list_inventory()
+        inventory = Inventory.list_inventory(sort: sort, filter: filter)
 
         socket
         |> stream(:inventory, inventory, reset: true)
@@ -62,7 +62,7 @@ defmodule Web.Pages.InventoryLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Inventory")
-     |> assign(:options, options)
+     |> assign(:sort, sort)
      |> assign(:filter, filter)}
   end
 
@@ -96,12 +96,12 @@ defmodule Web.Pages.InventoryLive.Index do
   end
 
   def handle_event("sort", %{"order" => sort_order, "by" => sort_by}, socket) do
-    options = %{
+    sort = %{
       sort_order: String.to_existing_atom(sort_order),
       sort_by: String.to_existing_atom(sort_by)
     }
 
-    {:noreply, assign_sorting_options(socket, options)}
+    {:noreply, assign_sort(socket, sort)}
   end
 
   @impl Phoenix.LiveView
@@ -112,7 +112,7 @@ defmodule Web.Pages.InventoryLive.Index do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <span class="inline-flex justify-between w-full p-3 border-b shadow-sm border-zinc-600">
+    <span class="sticky top-0 z-20 inline-flex justify-between w-full p-3 border-b shadow-sm border-zinc-600 bg-zinc-900">
       <div class="inline-flex sm:space-x-4">
         <div class="hidden sm:inline-flex">
           <.link
@@ -174,7 +174,7 @@ defmodule Web.Pages.InventoryLive.Index do
           </.menu>
         </div>
 
-        <div class="relative mr-2 sm:w-48">
+        <div class="relative w-32 mr-2">
           <.menu id="filter-inventory-menu" placement="right">
             <:trigger :let={{toggle_menu, button_id}}>
               <button
@@ -188,11 +188,13 @@ defmodule Web.Pages.InventoryLive.Index do
                 Filter
               </button>
             </:trigger>
-            <:item></:item>
-            <:item><.divider /></:item>
             <:item>
-              <.menu_link phx-click="filter" phx-value-name="">
-                <.icon name="hero-magnifying-glass-solid" class="w-4 h-4 mr-3" />Name
+              <.menu_link phx-click={toggle_menu("sub-menu")} class="justify-between">
+                <span class="inline-flex items-center">
+                  <.icon name="hero-magnifying-glass-solid" class="w-4 h-4 mr-3" />
+                  Name
+                </span>
+                <.icon name="hero-chevron-right-solid" class="flex-shrink-0 w-4 h-4" />
               </.menu_link>
               <.menu_link phx-click="filter" phx-value-sku="">
                 <.icon name="hero-chart-bar-solid" class="w-4 h-4 mr-3" />SKU
@@ -216,6 +218,14 @@ defmodule Web.Pages.InventoryLive.Index do
               <.menu_link>
                 <.icon name="hero-wrench-screwdriver-solid" class="w-4 h-4 mr-3" />Components
               </.menu_link>
+            </:item>
+          </.menu>
+
+          <.menu class="left-full" id="sub-menu" placement="right">
+            <:item>
+              <.menu_link phx-click={toggle_menu("sub-menu") |> JS.push("filter")} phx-value-name="Hat">Hat</.menu_link>
+              <.menu_link phx-click={toggle_menu("sub-menu") |> JS.push("filter")} phx-value-name="car">Car</.menu_link>
+              <.menu_link phx-click={toggle_menu("sub-menu") |> JS.push("filter")} phx-value-name="Computer">Computer</.menu_link>
             </:item>
           </.menu>
         </div>
@@ -259,17 +269,18 @@ defmodule Web.Pages.InventoryLive.Index do
       item={@item}
     />
 
-    <div class="mb-4 overflow-x-auto overflow-y-hidden">
+    <div class="mb-4">
       <.table
         id="all-inventory-table"
         rows={@streams.inventory}
         class="text-zinc-300"
         row_class="grid grid-cols-1 sm:table-row p-4"
+        sticky
       >
         <:col
           :let={{_id, item}}
           class="w-48 col-span-2"
-          label={sortable_link("Name", :name, @options)}
+          label={sortable_link("Name", :name, @sort)}
         >
           <%= item.name %>
           <p class="text-sm text-zinc-500"><%= item.category || "Placeholder" %></p>
@@ -279,7 +290,7 @@ defmodule Web.Pages.InventoryLive.Index do
           data_label="Price per unit"
           class="w-full col-start-1 sm:w-36"
           align={:right}
-          label={sortable_link("Price per unit", :unit_price, @options)}
+          label={sortable_link("Price per unit", :unit_price, @sort)}
         >
         <div class="flex flex-row justify-end gap-2">
           <p class="flex-1 text-right truncate"><%= item.unit_price %></p><p class="w-8 text-left text-zinc-500">GBP</p>
@@ -290,7 +301,7 @@ defmodule Web.Pages.InventoryLive.Index do
           data_label="In stock"
           class="w-full col-start-1 sm:w-36"
           align={:right}
-          label={sortable_link("In stock", :quantity_in_stock, @options)}
+          label={sortable_link("In stock", :quantity_in_stock, @sort)}
         >
           <div class="flex flex-row justify-end gap-2">
             <p class="flex-1 text-right truncate"><%= item.quantity_in_stock %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
@@ -301,7 +312,7 @@ defmodule Web.Pages.InventoryLive.Index do
           data_label="Committed"
           class="w-full col-start-1 sm:w-36"
           align={:right}
-          label={sortable_link("Commited", :committed_stock, @options)}
+          label={sortable_link("Commited", :committed_stock, @sort)}
         >
           <div class="flex flex-row justify-end gap-2">
             <p class="flex-1 text-right truncate"><%= item.committed_stock %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
@@ -312,7 +323,7 @@ defmodule Web.Pages.InventoryLive.Index do
           data_label="Reorder point"
           class="w-full col-start-1 sm:w-36"
           align={:right}
-          label="Reorder point"
+          label={sortable_link("Reorder point", :reorder_point, @sort)}
         >
           <div class="flex flex-row justify-end gap-2">
             <p class="flex-1 text-right truncate"><%= item.reorder_point %></p><p class="w-8 text-left text-zinc-500"><%= item.unit_of_measurement %></p>
@@ -339,12 +350,12 @@ defmodule Web.Pages.InventoryLive.Index do
     """
   end
 
-  defp sortable_link(label, col, options) do
+  defp sortable_link(label, col, sort) do
     assigns = %{
       label: label,
       col: col,
-      sort_order: get_opposite(options.sort_order),
-      sort_by: options.sort_by
+      sort_order: get_opposite(sort.sort_order),
+      sort_by: sort.sort_by
     }
 
     ~H"""
@@ -352,7 +363,7 @@ defmodule Web.Pages.InventoryLive.Index do
       phx-click="sort"
       phx-value-order={@sort_order}
       phx-value-by={@col}
-      class="inline-flex text-base cursor-pointer group"
+      class="inline-flex cursor-pointer group"
     >
       <%= @label %>
       <span class="flex items-center px-1 ml-2 text-zinc-300">

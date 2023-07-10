@@ -395,15 +395,15 @@ defmodule Web.Components.Core do
   def menu(assigns) do
     ~H"""
     <div class="flex h-full">
-      <div class="inline-block text-left group">
+      <div class="inline-block w-full text-left group">
         <%= render_slot(@trigger, {fn -> toggle_menu(@id) end, @id <> "-button"}) %>
 
         <div
           id={@id}
           class={[
             placement_class(@placement),
-            "absolute z-50 mt-2 w-full hidden border border-zinc-700
-              bottom-auto transform inset-x-0
+            "absolute z-50 w-full hidden border border-zinc-700
+              bottom-auto inset-x-0
               bg-zinc-800 rounded-lg shadow-lg ring-1 min-w-max
               ring-black ring-opacity-5 focus:outline-none overflow-y-auto",
             @class

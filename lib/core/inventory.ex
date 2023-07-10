@@ -34,8 +34,26 @@ defmodule Core.Inventory do
     difference
   end
 
-  def list_inventory() do
-    Repo.all(Inventory.Item)
+  def list_inventory(_options \\ [])
+
+  def list_inventory(options) do
+    Inventory.Item
+    |> filter_by_name(options[:filter])
+    |> sort(options[:sort])
+    |> Repo.all()
+  end
+
+  defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
+    order_by(query, {^sort_order, ^sort_by})
+  end
+
+  defp sort(query, _options), do: query
+
+  defp filter_by_name(query, %{name: ""}), do: query
+
+  defp filter_by_name(query, %{name: name}) do
+    ilike = "%#{name}%"
+    where(query, [c], ilike(c.name, ^ilike))
   end
 
   ## PubSub
