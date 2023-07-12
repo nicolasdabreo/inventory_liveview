@@ -11,6 +11,7 @@ defmodule Core.Inventory.Item do
     field :quantity_in_stock, :decimal
     field :committed_stock, :decimal, default: Decimal.new("0.0")
     field :reorder_point, :integer
+    field :type, Ecto.Enum, values: [:product, :supply, :material]
 
     field :actions, :map, virtual: true, default: %{edit: true, delete: true}
 

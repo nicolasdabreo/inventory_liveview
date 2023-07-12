@@ -13,6 +13,7 @@ defmodule MRP.Repo.Migrations.CreateInventoryItems do
       add :quantity_in_stock, :decimal, null: false
       add :committed_stock, :decimal, null: false
       add :reorder_point, :integer, null: false
+      add :type, :string, null: false
 
       timestamps()
     end

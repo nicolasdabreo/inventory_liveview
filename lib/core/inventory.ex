@@ -34,13 +34,23 @@ defmodule Core.Inventory do
     difference
   end
 
-  def list_inventory(_options \\ [])
+  def list_inventory(_inventory_type \\ :all, _options \\ [])
 
-  def list_inventory(options) do
+  def list_inventory(inventory_type, options) do
     Inventory.Item
+    |> type_query(inventory_type)
     |> filter_by_name(options[:filter])
+    |> filter_by_category(options[:filter])
     |> sort(options[:sort])
     |> Repo.all()
+  end
+
+  defp type_query(query, inventory_type) when inventory_type in [:product, :material, :supply] do
+    where(query, [i], i.type == ^inventory_type)
+  end
+
+  defp type_query(query, _) do
+    query
   end
 
   defp sort(query, %{sort_by: sort_by, sort_order: sort_order}) do
@@ -54,6 +64,13 @@ defmodule Core.Inventory do
   defp filter_by_name(query, %{name: name}) do
     ilike = "%#{name}%"
     where(query, [c], ilike(c.name, ^ilike))
+  end
+
+  defp filter_by_category(query, %{category: ""}), do: query
+
+  defp filter_by_category(query, %{category: category}) do
+    ilike = "%#{category}%"
+    where(query, [c], ilike(c.category, ^ilike))
   end
 
   ## PubSub
