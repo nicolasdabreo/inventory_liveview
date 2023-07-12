@@ -3,13 +3,7 @@
     <div class="px-4 mx-auto">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-6">
-          <.button
-            icon
-            color={nil}
-            size={nil}
-            class="px-1 py-1"
-            phx-click={show_slideover("slideover-left")}
-          >
+          <.button icon phx-click={show_slideover("slideover-left")}>
             <span class="sr-only">Open navigation menu</span>
             <.icon name="hero-bars-3-solid" />
           </.button>
@@ -27,7 +21,7 @@
             </.breadcrumbs>
           </div>
         </div>
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center gap-x-3">
           <div class="hidden w-full max-w-lg md:flex lg:max-w-xs">
             <label for="search" class="sr-only">Search</label>
             <div class="relative">
@@ -60,23 +54,17 @@
             </div>
           </div>
 
-          <.button icon color={nil} size={nil} class="flex px-1 py-1 md:hidden">
+          <.button icon class="flex md:hidden">
             <.icon name="hero-magnifying-glass-solid" />
           </.button>
 
           <div class="h-5 border-l border-slate-900/15"></div>
 
-          <.button icon color={nil} size={nil} class="px-1 py-1">
+          <.button icon>
             <.icon name="hero-inbox-solid" />
           </.button>
 
-          <.button
-            icon
-            color={nil}
-            size={nil}
-            class="px-1 py-1"
-            phx-click={show_slideover("slideover-right")}
-          >
+          <.button icon phx-click={show_slideover("slideover-right")}>
             <.icon name="hero-user-solid" />
           </.button>
         </div>
@@ -98,8 +86,7 @@
   </main>
 
   <.slideover id="slideover-left" direction="left">
-    <:slideover_header>
-    </:slideover_header>
+    <:slideover_header></:slideover_header>
     <:slideover_content></:slideover_content>
   </.slideover>
 
@@ -107,7 +94,11 @@
     <:slideover_header>
       <div class="flex items-center flex-shrink-0">
         <div>
-          <img class="inline-block rounded-full h-9 w-9" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+          <img
+            class="inline-block rounded-full h-9 w-9"
+            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            alt=""
+          />
         </div>
         <div class="ml-3">
           <p class="text-sm font-medium truncate text-zinc-300">Tom Cook</p>
@@ -117,15 +108,25 @@
     </:slideover_header>
     <:slideover_content>
       <div class="text-zinc-300 border-t border-zinc-700 py-2.5">
-        <.menu_link class="py-2.5"><.icon name="hero-user-solid" class="mr-2" /> View profile</.menu_link>
-        <.menu_link class="py-2.5"><.icon name="hero-cog-solid" class="mr-2" /> Account settings</.menu_link>
+        <.menu_link class="py-2.5">
+          <.icon name="hero-user-solid" class="mr-2" /> View profile
+        </.menu_link>
+        <.menu_link class="py-2.5">
+          <.icon name="hero-cog-solid" class="mr-2" /> Account settings
+        </.menu_link>
       </div>
       <div class="text-zinc-300 border-t border-zinc-700 py-2.5">
-        <.menu_link class="py-2.5"><.icon name="hero-book-open-solid" class="mr-2" /> User guides</.menu_link>
-        <.menu_link class="py-2.5"><.icon name="hero-users-solid" class="mr-2" /> Get support</.menu_link>
+        <.menu_link class="py-2.5">
+          <.icon name="hero-book-open-solid" class="mr-2" /> User guides
+        </.menu_link>
+        <.menu_link class="py-2.5">
+          <.icon name="hero-users-solid" class="mr-2" /> Get support
+        </.menu_link>
       </div>
       <div class="text-zinc-300 border-t border-zinc-700 py-2.5">
-        <.menu_link class="py-2.5"><.icon name="hero-arrow-right-on-rectangle-solid" class="mr-2" /> Log out</.menu_link>
+        <.menu_link class="py-2.5">
+          <.icon name="hero-arrow-right-on-rectangle-solid" class="mr-2" /> Log out
+        </.menu_link>
       </div>
     </:slideover_content>
   </.slideover>

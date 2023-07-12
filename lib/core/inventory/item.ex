@@ -14,6 +14,7 @@ defmodule Core.Inventory.Item do
     field :type, Ecto.Enum, values: [:product, :supply, :material]
 
     field :actions, :map, virtual: true, default: %{edit: true, delete: true}
+    field :toggled, :boolean, default: false, virtual: true
 
     timestamps()
   end

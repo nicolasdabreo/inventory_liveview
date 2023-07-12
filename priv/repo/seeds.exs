@@ -18,7 +18,12 @@ for _i <- 1..25 do
     supplier_information: Faker.Company.name(),
     unit_price: Decimal.new(:erlang.float_to_binary(Faker.Commerce.price(), decimals: 2)),
     unit_of_measurement: Enum.random(~w(lb oz ft in yd mi m cm mm km g kg mL L gal pt qt)),
-    quantity_in_stock: Decimal.new(:erlang.float_to_binary(Enum.random([0.1, 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1]), decimals: 1)),
+    quantity_in_stock:
+      Decimal.new(
+        :erlang.float_to_binary(Enum.random([0.1, 1.1, 2.1, 3.1, 4.1, 5.1, 6.1, 7.1, 8.1]),
+          decimals: 1
+        )
+      ),
     reorder_point: Enum.random(1..10),
     type: Enum.random(Ecto.Enum.values(Core.Inventory.Item, :type))
   })

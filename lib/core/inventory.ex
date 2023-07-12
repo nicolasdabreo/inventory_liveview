@@ -24,6 +24,8 @@ defmodule Core.Inventory do
 
   def get_item!(id), do: Repo.get!(Inventory.Item, id)
 
+  def total_inventory_count(), do: Repo.one(from i in Inventory.Item, select: count())
+
   def calculate_stock_difference(%Inventory.Item{
         quantity_in_stock: quantity_in_stock,
         committed_stock: committed_stock,

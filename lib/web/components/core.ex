@@ -56,7 +56,7 @@ defmodule Web.Components.Core do
   attr(:type, :string, default: "button", values: ~w(button submit reset))
   attr(:variant, :string, default: "solid", values: ~w(solid outline))
   attr(:size, :string, default: "md", values: ~w(sm md lg))
-  attr(:color, :string, default: "blue")
+  attr(:color, :string, default: "")
   attr(:patch, :string, default: nil)
   attr(:navigate, :string, default: nil)
   attr(:href, :string, default: nil)
@@ -77,8 +77,8 @@ defmodule Web.Components.Core do
     <button
       class={[
         button_base_classes(@icon),
-        button_size_classes(@size),
-        button_color_classes(@color),
+        button_size_classes(@size, @icon),
+        button_color_classes(@color, @icon),
         @class
       ]}
       type={@type}
@@ -101,8 +101,8 @@ defmodule Web.Components.Core do
       href={@href}
       class={[
         button_base_classes(@icon),
-        button_size_classes(@size),
-        button_color_classes(@color),
+        button_size_classes(@size, @icon),
+        button_color_classes(@color, @icon),
         @class
       ]}
       type={@type}
@@ -114,31 +114,34 @@ defmodule Web.Components.Core do
   end
 
   defp button_base_classes(false) do
-    "inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-zinc-400 disabled:bg-zinc-200 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75 focus-within:outline-none focus-within:ring-2 focus:ring-2 focus:outline-none focus:ring-violet-300"
+    "truncate inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-zinc-400 disabled:bg-zinc-200 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75 focus-within:outline-none focus-within:ring-2 focus:ring-2 focus:outline-none focus:ring-violet-300"
   end
 
   defp button_base_classes(true) do
-    "inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-zinc-400 disabled:bg-zinc-200 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75 focus-within:outline-none focus-within:ring-2 focus:ring-2 focus:outline-none focus:ring-violet-300"
+    "truncate inline-flex items-center font-semibold no-underline border border-transparent border border-zinc-300 rounded-md shadow-lg disabled:text-zinc-400 disabled:bg-zinc-200 disabled:hover:bg-zinc-200 disabled:cursor-not-allowed phx-submit-loading:opacity-75 focus-within:outline-none focus-within:ring-2 focus:ring-2 focus:outline-none focus:ring-violet-300"
   end
 
-  defp button_size_classes("sm"), do: "h-8 px-3 py-2 text-sm"
-  defp button_size_classes("md"), do: "h-10 px-4 py-2 text-base"
-  defp button_size_classes("lg"), do: "h-12 px-6 py-2 text-lg"
-  defp button_size_classes(_size), do: ""
+  defp button_size_classes("sm", _icon = true), do: "p-1 text-sm"
+  defp button_size_classes("sm", _icon), do: "h-8 px-3 py-2 text-sm"
+  defp button_size_classes("md", _icon = true), do: "p-1 text-base"
+  defp button_size_classes("md", _icon), do: "h-10 px-4 py-2 text-base"
+  defp button_size_classes("lg", _icon = true), do: "p-1 text-lg"
+  defp button_size_classes("lg", _icon), do: "h-12 px-6 py-2 text-lg"
+  defp button_size_classes(_size, _icon), do: ""
 
-  defp button_color_classes("blue"),
+  defp button_color_classes("blue", _icon),
     do:
       "bg-blue-600 text-white hover:text-slate-100 hover:bg-blue-500 active:bg-blue-800 active:text-blue-100"
 
-  defp button_color_classes("zinc"),
+  defp button_color_classes("zinc", _icon),
     do:
       "bg-slate-900 text-white hover:bg-slate-700 hover:text-slate-100 active:bg-slate-800 active:text-slate-300"
 
-  defp button_color_classes("white"),
+  defp button_color_classes("white", _icon),
     do:
       "bg-white text-slate-900 hover:bg-blue-50 active:bg-blue-200 active:text-slate-600 border border-slate-300"
 
-  defp button_color_classes(_size),
+  defp button_color_classes(_size, _icon),
     do: "text-zinc-400 hover:text-zinc-300 border border-zinc-400 hover:border-zinc-300"
 
   @doc """
@@ -290,9 +293,7 @@ defmodule Web.Components.Core do
                   type="button"
                   class="flex-none p-3 -m-3 opacity-20 hover:opacity-40"
                   aria-label="close"
-                  color={nil}
-                  size={nil}
-                  class="p-1"
+                  icon
                 >
                   <span class="sr-only">
                     Close panel
@@ -679,7 +680,7 @@ defmodule Web.Components.Core do
     ~H"""
     <div
       id={"#{@id}-overlay"}
-      class="fixed inset-0 z-10 hidden bg-opacity-75 bg-zinc-600"
+      class="fixed inset-0 z-20 hidden bg-opacity-75 bg-zinc-600"
       aria-hidden="true"
       phx-click={JS.exec("data-cancel", to: "##{@id}")}
     >
@@ -716,13 +717,7 @@ defmodule Web.Components.Core do
               </h2>
 
               <div class="flex items-center pr-4 h-7">
-                <.button
-                  type="button"
-                  phx-click={hide_slideover(@id)}
-                  color={nil}
-                  size={nil}
-                  class="p-1 mr-[-16px]"
-                >
+                <.button type="button" phx-click={hide_slideover(@id)} icon class="mr-[-16px]">
                   <span class="sr-only">
                     Close panel
                   </span>
